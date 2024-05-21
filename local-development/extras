@@ -1,0 +1,8 @@
+# API
+
+## `getAll` pagination
+```js
+    let page_number = queries.page ? queries.page : 1;
+    let page_size = queries.size ? queries.size : 25;
+    let query = await Client.query ( `SELECT  d.*, dt.* FROM public.dreapp_document d JOIN public.dreapp_documenttext dt ON d.id = dt.other_id LIMIT ${page_size}  OFFSET (${page_number} - 1) * ${page_size};` );
+```
