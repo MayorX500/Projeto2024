@@ -130,4 +130,11 @@ dist
 .pnp.*
 
 
+# Connection file to the database
 app/backend/config/postgres.js
+
+## ignore big sql files
+databases/json/dre.json
+## Stored in the server "http://mayorx.xyz/Media/EngWeb2024/project/dump.sql"
+databases/postgres/datasets/dump.sql
+
