@@ -1,8 +1,27 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+header {
+  background-color: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.content .entry {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px;
+}
+
+footer {
+  background-color: #f0f0f0;
+  padding: 10px;
+  text-align: center;
 }

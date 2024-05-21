@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const { default: axios } = require('axios');
 
 var app = express();
 
@@ -19,6 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+axios.defaults.baseURL = 'http://localhost:3000/api';
+axios.defaults.timeout = 10000;
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -26,6 +30,9 @@ app.use('/users', usersRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 
 // error handler
 app.use(function(err, req, res, next) {
