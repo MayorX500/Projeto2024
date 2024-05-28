@@ -1,5 +1,63 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  html(lang="en")
+    head
+      meta(charset="UTF-8")
+      meta(name="viewport", content="width=device-width, initial-scale=1.0")
+      link(rel="stylesheet", href="styles.css")
+      link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css')
+      title Document
+    body
+      header
+        button.menu-button(onclick='openSidebar()')
+          i.fa-solid.fa-bars
+        img.logo-dre(src="images/Diário_da_República_2023.png", alt="Logo")
+        #sidebar
+          button.close-button(onclick='closeSidebar()')
+            i.fa-solid.fa-times
+        form.search
+            div.input-wrapper
+              input(type="text", placeholder="Search...")
+              i.fa.fa-search
+            button(type="submit") Search
+      main
+        h1 Diário da República
+        p
+          | O Diário da República é uma publicação oficial do Estado Português que reúne todas as leis, decretos, resoluções, regulamentos e outros atos normativos.
+        section
+          h2 Últimas Publicações
+          ul
+            li
+              a(href="#") Decreto-Lei n.º 1/2023
+            li
+              a(href="#") Resolução do Conselho de Ministros n.º 1/2023
+            li
+              a(href="#") Portaria n.º 1/2023
+        section
+          h2 Contactos
+          address
+            p
+              | Diário da República
+              br
+              | Rua de São Bento, n.º 148
+              br
+              | 1200-821 Lisboa
+              br
+              | Portugal
+            p
+              | Tel.: 21 394 00 00
+              br
+              | Fax: 21 394 00 01
+              br
+              | Email:
+    script.
+      function openSidebar() {
+        var sidebar = document.getElementById('sidebar');
+        sidebar.style.left = '0px';
+      }
+      
+      function closeSidebar() {
+        var sidebar = document.getElementById('sidebar');
+        sidebar.style.left = '-400px';
+      }

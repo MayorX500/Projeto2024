@@ -1,27 +1,152 @@
-body {
+body, html {
+  height: 100%;
+  margin: 0;
   font-family: Arial, sans-serif;
+  background-color: #e6e6e6;
 }
 
 header {
-  background-color: #f0f0f0;
-  padding: 20px;
-  text-align: center;
+  display: flex;
+  background-color: #ffff;
+  color: #fff;
+  padding: 10px 20px;
+  height: 80px;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.search-bar {
+.logo-dre {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  margin-left: 100px;
+}
+
+.logo-dre img{
+  width: 20px;
+  height: 20px;
+}
+
+.menu-button {
+  border: none;
+  background: none;
+  align-items: center;
+  position: absolute;
+  left: 50px;
+}
+
+.menu-button i {
+  font-size: 30px;
+  cursor: pointer;
+  color: #626262;
+}
+
+.menu-button button{
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.menu-button button, i:hover {
+  color: #b2b1b3;
+}
+
+.close-button {
+  border: none;
+  background: none;
+  position: absolute;
+  top: 15px;
+  left: 350px;
+}
+
+.close-button i {
+  font-size: 35px;
+  cursor: pointer;
+  color: #626262;
+}
+
+.close-button button{
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-button button, i:hover {
+  color: #b2b1b3;
+}
+
+main {
   display: flex;
   justify-content: center;
-  padding: 20px;
+  align-items: center;
+  height: calc(100% - 48px); /* Adjust based on header height */
 }
 
-.content .entry {
-  border-bottom: 1px solid #ccc;
-  padding: 10px;
-  margin: 10px;
+#sidebar {
+  position: fixed;
+  left: -400px; /* Sidebar width */
+  top: 0;
+  height: 100%;
+  width: 400px;
+  background-color: #626262;
+  overflow-y: auto; /* Adds scroll to the sidebar if content is long */
+  transition: left 0.3s; /* Smooth transition for sliding effect */
 }
 
-footer {
-  background-color: #f0f0f0;
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search {
+  display: flex;
+  border: #626262;
+  border-radius: 5px;
+  align-items: center;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 25px;
+  width: 500px;
+  border: #626262;
+}
+
+.input-wrapper i {
+  position: absolute;
+  left: 10px;
+  color: #626262; /* Icon color */
+  top: 10px;
+}
+
+.search input {
+  flex-grow: 1;
+  margin-bottom: 10px;
   padding: 10px;
-  text-align: center;
+  padding-left: 35px; /* Make space for the icon */
+  border: #b2b1b3;
+  border-radius: 10px;
+}
+
+.fa-search {
+  position: absolute;
+  left: 10px;
+  color: #626262; /* Icon color */
+}
+
+.search button {
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: #626262;
+  color: white;
+  cursor: pointer;
+  margin-right: 300px;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.search button:hover {
+  background-color: #b2b1b3;
 }
