@@ -1,8 +1,11 @@
 body, html {
   height: 100%;
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #e6e6e6;
+  background-color: #edecec;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400; 
+  font-size: 12px; 
+  line-height: 1.5; 
 }
 
 header {
@@ -13,6 +16,7 @@ header {
   height: 80px;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo-dre {
@@ -61,7 +65,7 @@ header {
 .close-button i {
   font-size: 35px;
   cursor: pointer;
-  color: #626262;
+  color: #e1e1e1;
 }
 
 .close-button button{
@@ -70,14 +74,14 @@ header {
 }
 
 .close-button button, i:hover {
-  color: #b2b1b3;
+  color: #919191;
 }
 
 main {
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: calc(100% - 48px); /* Adjust based on header height */
+  flex-direction: column;
+  padding: 20px;
 }
 
 #sidebar {
@@ -86,6 +90,7 @@ main {
   top: 0;
   height: 100%;
   width: 400px;
+  z-index: 1000;
   background-color: #626262;
   overflow-y: auto; /* Adds scroll to the sidebar if content is long */
   transition: left 0.3s; /* Smooth transition for sliding effect */
@@ -99,8 +104,6 @@ main {
 
 .search {
   display: flex;
-  border: #626262;
-  border-radius: 5px;
   align-items: center;
 }
 
@@ -108,45 +111,75 @@ main {
   position: relative;
   display: flex;
   align-items: center;
-  margin-right: 25px;
   width: 500px;
-  border: #626262;
-}
-
-.input-wrapper i {
-  position: absolute;
-  left: 10px;
-  color: #626262; /* Icon color */
-  top: 10px;
 }
 
 .search input {
   flex-grow: 1;
   margin-bottom: 10px;
   padding: 10px;
-  padding-left: 35px; /* Make space for the icon */
-  border: #b2b1b3;
-  border-radius: 10px;
-}
-
-.fa-search {
-  position: absolute;
-  left: 10px;
-  color: #626262; /* Icon color */
+  border-radius: 10px 0 0 10px;
+  border-color: #626262;
+  border-style: solid;
+  border-width: 0.01cm;
 }
 
 .search button {
   padding: 10px;
   border: none;
-  border-radius: 10px;
+  border-radius: 0 10px 10px 0;
   background-color: #626262;
-  color: white;
   cursor: pointer;
   margin-right: 300px;
-  font-size: 15px;
-  margin-bottom: 10px;
+  font-size: 15.5px;
+  margin-bottom: 11px;
+}
+
+.search button i {
+  color: #fff;
+  font-size: 16px;
 }
 
 .search button:hover {
   background-color: #b2b1b3;
 }
+.content-area {
+  display: flex;
+  align-items: flex-start; /* Aligns items at the top of the container */
+  padding: 20px; /* Adds some padding around the content area */
+}
+
+.calendar-container {
+  flex: 0 0 300px; /* Gives the calendar a fixed width */
+  margin-right: 30px; /* Adds space between the calendar and the text blocks */
+}
+
+.text-block-container {
+  flex: 1; /* Allows the text block container to fill the rest of the space */
+  display: flex;
+  flex-direction: column;
+}
+
+#calendar {
+  margin-top: 0; /* Adjusts top margin to line up with the text blocks */
+}
+
+.text-block, .text-block h1, .text-block h2 {
+  margin-top: 0; /* Removes top margin from text block titles for alignment */
+  background-color: #fff;
+  padding: 20px;
+}
+
+.text-block {
+  margin-bottom: 20px; /* Adds space between text blocks */
+}
+
+.text-block h2 {
+  font-size: 20px;
+}
+
+.text-block p, li {
+  margin: 0; /* Removes default margin from paragraphs */
+  font-size: 15px;
+}
+

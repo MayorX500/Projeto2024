@@ -1,0 +1,17 @@
+const { Client } = require('pg');
+
+// Configure the PostgreSQL client
+const client = new Client({
+  user: 'filipa',
+  host: 'miguelrg.com',
+  database: 'postgres',
+  password: 'a96556',
+  port: 5432,
+});
+
+// Connect to the database
+client.connect()
+  .then(() => console.log('Connected to the PostgreSQL database'))
+  .catch(err => console.error('Connection error', err.stack));
+
+module.exports = client;

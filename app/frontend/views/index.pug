@@ -5,8 +5,11 @@ block content
     head
       meta(charset="UTF-8")
       meta(name="viewport", content="width=device-width, initial-scale=1.0")
-      link(rel="stylesheet", href="styles.css")
+      link(rel="stylesheet", href="stylesheets/style.css")
       link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css')
+      link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css')
+      script(src='https://cdn.jsdelivr.net/npm/flatpickr')
+      link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap")
       title Document
     body
       header
@@ -16,41 +19,38 @@ block content
         #sidebar
           button.close-button(onclick='closeSidebar()')
             i.fa-solid.fa-times
+          h2 Menu
+          ul
+            li
+              a(href="#") Início
+            li
+              a(href="#") Diário da República
+            li
+              a(href="#") Legislação
+            li
+              a(href="#") Contactos
+            li
+              a(href="#") Sobre
         form.search
             div.input-wrapper
               input(type="text", placeholder="Search...")
+            button(type="submit")
               i.fa.fa-search
-            button(type="submit") Search
       main
-        h1 Diário da República
-        p
-          | O Diário da República é uma publicação oficial do Estado Português que reúne todas as leis, decretos, resoluções, regulamentos e outros atos normativos.
-        section
-          h2 Últimas Publicações
-          ul
-            li
-              a(href="#") Decreto-Lei n.º 1/2023
-            li
-              a(href="#") Resolução do Conselho de Ministros n.º 1/2023
-            li
-              a(href="#") Portaria n.º 1/2023
-        section
-          h2 Contactos
-          address
-            p
-              | Diário da República
-              br
-              | Rua de São Bento, n.º 148
-              br
-              | 1200-821 Lisboa
-              br
-              | Portugal
-            p
-              | Tel.: 21 394 00 00
-              br
-              | Fax: 21 394 00 01
-              br
-              | Email:
+        .content-area
+          .calendar-container
+            div(id='calendar')
+          .text-block-container
+            h1.text-block(href="#") Diário da República - o mais recente
+            .text-block
+              h2 Últimas Publicações
+              ul
+                li
+                  a(href="#") Decreto-Lei n.º 1/2023
+                li
+                  a(href="#") Resolução do Conselho de Ministros n.º 1/2023
+                li
+                  a(href="#") Portaria n.º 1/2023
     script.
       function openSidebar() {
         var sidebar = document.getElementById('sidebar');
@@ -61,3 +61,12 @@ block content
         var sidebar = document.getElementById('sidebar');
         sidebar.style.left = '-400px';
       }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        flatpickr("#calendar", {
+          inline: true, // Ensures the calendar is always visible
+          static: true, // Helps in positioning inside the specific 'div'
+        });
+      });
+
+
