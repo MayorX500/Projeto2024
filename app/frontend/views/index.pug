@@ -10,48 +10,24 @@ block content
       link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css')
       script(src='https://cdn.jsdelivr.net/npm/flatpickr')
       link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap")
-      title Document
+      script(src="https://code.jquery.com/jquery-3.6.0.min.js")
     body
       header
-        button.menu-button(onclick='openSidebar()')
-          i.fa-solid.fa-bars
-        img.logo-dre(src="images/Diário_da_República_2023.png", alt="Logo")
-        #sidebar
-          button.close-button(onclick='closeSidebar()')
-            i.fa-solid.fa-times
-          h2 Menu
-          ul
-            li
-              a(href="#") Início
-            li
-              a(href="#") Diário da República
-            li
-              a(href="#") Legislação
-            li
-              a(href="#") Contactos
-            li
-              a(href="#") Sobre
-        form.search
-            div.input-wrapper
-              input(type="text", placeholder="Search...")
-            button(type="submit")
-              i.fa.fa-search
+        include header
       main
-        .content-area
-          .calendar-container
-            div(id='calendar')
-          .text-block-container
-            h1.text-block(href="#") Diário da República - o mais recente
-            .text-block
-              h2 Últimas Publicações
-              ul
-                li
-                  a(href="#") Decreto-Lei n.º 1/2023
-                li
-                  a(href="#") Resolução do Conselho de Ministros n.º 1/2023
-                li
-                  a(href="#") Portaria n.º 1/2023
+        include filters
+        include first-page
     script.
+      document.addEventListener("DOMContentLoaded", function() {
+        var currentUrl = window.location.href; // Gets the full URL
+
+        // If you want to display it in the HTML
+        var displayElement = document.getElementById('urlDisplay');
+        if (displayElement) {
+          displayElement.textContent = currentUrl;
+        }
+      });
+
       function openSidebar() {
         var sidebar = document.getElementById('sidebar');
         sidebar.style.left = '0px';
@@ -68,5 +44,105 @@ block content
           static: true, // Helps in positioning inside the specific 'div'
         });
       });
+      
+      document.getElementById('loginButton').addEventListener('click', function() {
+          window.location.href = '/#'; // Redirects to the login page
+      });
 
+      $(document).ready(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dateFromUrl = urlParams.get('date'); 
 
+        var calendar = flatpickr("#calendar", {
+            inline: true,
+            static: true,
+        });
+
+        // Restore checked filters
+        var savedFilters = JSON.parse(localStorage.getItem('selectedFilters'));
+        if (savedFilters) {
+            savedFilters.forEach(function(filter) {
+                $('input[name="filter"][value="' + filter + '"]').prop('checked', true);
+            });
+        }
+
+        if (dateFromUrl) {
+            calendar.setDate(new Date(dateFromUrl)); // Sets the date in the calendar from the URL
+        } else {
+            var savedDate = localStorage.getItem('selectedDate');
+            if (savedDate) {
+                calendar.setDate(new Date(savedDate));
+            }
+        }
+
+        // Restore selected date
+        var savedDate = localStorage.getItem('selectedDate');
+        if (savedDate) {
+            calendar.setDate(savedDate);
+        }
+
+        // Restore dropdown selection
+        var selectedItem = localStorage.getItem('selectedItem');
+        if (selectedItem) {
+            $('#item-select').val(selectedItem);
+        }
+
+        $('#apply-filters').on('click', function() {
+          var selectedFilters = [];
+          // Collect all checked filters
+          $('input[name="filter"]:checked').each(function() {
+              selectedFilters.push($(this).val());
+          });
+
+          localStorage.setItem('selectedFilters', JSON.stringify(selectedFilters));
+
+          var selectedDate = calendar.selectedDates[0];  // Assumes single date selection
+
+          // Format the date if it is selected
+          if (selectedDate) {
+            var localDate = selectedDate.getFullYear() + '-' + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + '-' + selectedDate.getDate().toString().padStart(2, '0');
+            localStorage.setItem('selectedDate', localDate);
+            selectedFilters.push("date=" + encodeURIComponent(localDate));
+          } else {
+            localStorage.removeItem('selectedDate');
+          }
+
+          // Fetch the selected option from dropdown
+          var selectedItem = $('#item-select').val();
+          localStorage.setItem('selectedItem', selectedItem);
+          if (selectedItem && selectedItem !== 'Nenhum') {
+              selectedFilters.push("item=" + encodeURIComponent(selectedItem));
+          }
+
+          // Construct query parameter
+          var queryParams = selectedFilters.map(function(filter) {
+              if (!filter.includes('date=') && !filter.includes('item=')) {
+                  return encodeURIComponent('filter') + '=' + encodeURIComponent(filter);
+              }
+              return filter;
+          }).join('&');
+
+          // Redirect to the updated URL with query parameters, causing a page reload
+          if (queryParams) {
+              window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryParams;
+          } else {
+              window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname;
+          }
+        });
+
+        // Clear filters logic
+        $('#clear-filters').on('click', function() {
+            localStorage.removeItem('selectedFilters');
+            localStorage.removeItem('selectedDate');
+            localStorage.removeItem('selectedItem');
+
+            // Uncheck all checkboxes
+            $('input[name="filter"]:checked').prop('checked', false);
+
+            // Clear selected date in flatpickr
+            calendar.clear();
+
+            // Reset dropdown
+            $('#item-select').val('Nenhum');
+        });
+      });

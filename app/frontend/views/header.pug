@@ -1,0 +1,22 @@
+button.menu-button(onclick='openSidebar()')
+    i.fa-solid.fa-bars
+img.logo-dre(src="images/Diário_da_República_2023.png", alt="Logo")
+#sidebar
+    button.close-button(onclick='closeSidebar()')
+        i.fa-solid.fa-times
+    h2 Menu
+    ul
+        li
+            a(href="/") Início
+        li
+            a(href="#") Legislação
+        li
+            a(href="#") Contactos
+        li
+            a(href="#") Sobre
+form.search
+    div.input-wrapper
+        input(type="text", placeholder="Search...")
+    button(type="submit")
+        i.fa.fa-search
+button#loginButton Login

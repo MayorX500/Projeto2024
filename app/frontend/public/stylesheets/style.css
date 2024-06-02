@@ -6,6 +6,19 @@ body, html {
   font-weight: 400; 
   font-size: 12px; 
   line-height: 1.5; 
+  overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: #0958b8;
+}
+
+a:visited {
+  color: #5e1251;
 }
 
 header {
@@ -17,16 +30,18 @@ header {
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .logo-dre {
   display: flex;
   align-items: center;
   height: 50px;
-  margin-left: 100px;
+  margin-left: 90px;
+  padding-right: 40px;
 }
 
-.logo-dre img{
+.logo-dre img {
   width: 20px;
   height: 20px;
 }
@@ -35,8 +50,8 @@ header {
   border: none;
   background: none;
   align-items: center;
-  position: absolute;
-  left: 50px;
+  position: relative;
+  left: 40px;
 }
 
 .menu-button i {
@@ -45,7 +60,7 @@ header {
   color: #626262;
 }
 
-.menu-button button{
+.menu-button button {
   font-size: 24px;
   cursor: pointer;
 }
@@ -68,7 +83,7 @@ header {
   color: #e1e1e1;
 }
 
-.close-button button{
+.close-button button {
   font-size: 24px;
   cursor: pointer;
 }
@@ -80,8 +95,10 @@ header {
 main {
   display: flex;
   height: calc(100% - 48px); /* Adjust based on header height */
-  flex-direction: column;
+  flex-direction: row;
   padding: 20px;
+  align-items: flex-start;
+  width: 100%;
 }
 
 #sidebar {
@@ -96,6 +113,35 @@ main {
   transition: left 0.3s; /* Smooth transition for sliding effect */
 }
 
+#sidebar h2 {
+  color: #fff;
+  padding-top: 100px;
+  padding-left: 50px;
+  padding-bottom: 50px;
+  margin: 0;
+  font-size: 32px;
+}
+
+#sidebar ul {
+  list-style-type: none;
+  padding-left: 50px;
+  margin: 0;
+}
+
+#sidebar li {
+  margin-bottom: 18px;
+  font-size: 24px;
+}
+
+#sidebar a:link, #sidebar a:visited {
+  color: #fff;
+  text-decoration: none;
+}
+
+#sidebar a:hover {
+  color: #adadad;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -105,13 +151,13 @@ main {
 .search {
   display: flex;
   align-items: center;
+  flex-grow: 1; /* Allows the search to expand and contract */
 }
 
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  width: 500px;
 }
 
 .search input {
@@ -122,6 +168,8 @@ main {
   border-color: #626262;
   border-style: solid;
   border-width: 0.01cm;
+  margin-left: 75px;
+  width: 450px;
 }
 
 .search button {
@@ -130,9 +178,9 @@ main {
   border-radius: 0 10px 10px 0;
   background-color: #626262;
   cursor: pointer;
-  margin-right: 300px;
   font-size: 15.5px;
   margin-bottom: 11px;
+  margin-right: 10px; /* Adjusted to prevent overflow */
 }
 
 .search button i {
@@ -143,43 +191,218 @@ main {
 .search button:hover {
   background-color: #b2b1b3;
 }
-.content-area {
-  display: flex;
-  align-items: flex-start; /* Aligns items at the top of the container */
-  padding: 20px; /* Adds some padding around the content area */
+
+.right-column {
+  margin: 40px 80px 20px 20px;
+  width: calc(100% - 80px); /* Adjust to prevent overflow */
+}
+
+.left-column {
+  margin: 40px 20px 20px 40px; 
 }
 
 .calendar-container {
   flex: 0 0 300px; /* Gives the calendar a fixed width */
   margin-right: 30px; /* Adds space between the calendar and the text blocks */
-}
-
-.text-block-container {
-  flex: 1; /* Allows the text block container to fill the rest of the space */
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 4px 4px rgba(111, 111, 111, 0.1);
 }
 
 #calendar {
   margin-top: 0; /* Adjusts top margin to line up with the text blocks */
 }
 
-.text-block, .text-block h1, .text-block h2 {
+.block {
+  padding: 15px;
+}
+
+.ministry {
+  color: #626262;
+}
+
+.text-block, .text-block h1, .text-block h2, .text-block h3, .text-block p {
   margin-top: 0; /* Removes top margin from text block titles for alignment */
   background-color: #fff;
-  padding: 20px;
 }
 
 .text-block {
   margin-bottom: 20px; /* Adds space between text blocks */
+  box-shadow: 0 4px 4px rgba(111, 111, 111, 0.1);
 }
 
 .text-block h2 {
   font-size: 20px;
+  margin-bottom: 5px;
 }
 
 .text-block p, li {
   margin: 0; /* Removes default margin from paragraphs */
-  font-size: 15px;
+  font-size: 16px;
 }
 
+#loginButton {
+  position: relative;
+  flex-shrink: 0;
+  margin-bottom: 10px;
+  padding: 8px 15px; /* Adjust padding as needed */
+  background-color: #569ff7; /* Background color of the button */
+  color: white; /* Text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  right: 50px;
+  width: 80px;
+}
+
+#loginButton:hover {
+  background-color: #64b3f4; /* Darker background on hover */
+}
+
+@media (max-width: 1024px) {
+  #loginButton {
+    left: 950px;
+  }
+}
+
+.filters {
+  font-size: 14px;
+  background-color: #fff;
+  padding: 25px;
+  width: 305px;
+  box-shadow: 0 4px 4px rgba(111, 111, 111, 0.1);
+}
+
+.filters h2 {
+  font-size: 22px;
+  margin-bottom: -50px;
+}
+
+.filters h3 {
+  font-size: 18px;
+  margin-top: 60px;
+}
+
+.filter-option {
+  margin-bottom: 10px;
+  margin-top: 20px;
+  font-size: 17px;
+}
+
+.filter-option select {
+  font-size: 17px;
+  width: 145px;
+}
+
+.filters button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #569ff7;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  margin-right: 10px; /* Adjusted to prevent overflow */
+}
+
+.filters button:hover {
+  background-color: #64b3f4;
+}
+
+/* Custom checkbox styling */
+.custom-checkbox {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+  color: rgb(0, 0, 0); /* Blue label text */
+}
+
+/* Hide the default checkbox */
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #dadada;
+  border-radius: 50%; /* Makes the checkbox circular */
+}
+
+/* On mouse-over, add a grey background color */
+.custom-checkbox:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: #569ff7;
+}
+
+/* Create the indicator (the dot) inside the checkbox */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator when the checkbox is checked */
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot) */
+.custom-checkbox .checkmark:after {
+  left: 9px;
+  top: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+.right-column button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: white;
+  color: #569ff7;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  margin-right: 10px; /* Adjusted to prevent overflow */
+}
+
+.right-column button.active {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #569ff7;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  margin-right: 10px; /* Adjusted to prevent overflow */
+}
+
+.right-column button:hover {
+  background-color: #8fccff;
+  color: white;
+}

@@ -1,0 +1,23 @@
+.left-column
+    .filters
+        h2 Filtros
+        h3 Data:
+        .calendar-container
+            div(id='calendar')
+        h3 Categoria:
+        // criar/apagar/editar outra categoria, a lista deverá ser atualizada */
+        each  type in types
+            .filter-option
+                label.custom-checkbox
+                    input(type='checkbox', name='filter', value=type)
+                    span.checkmark
+                    | #{type}
+        h3 Ordenar por:
+            .filter-option
+                select(name='itemSelection', id='item-select')
+                    - var items = ['Nenhum', 'Recente', 'Antigo', 'ID']
+                    each item in items
+                        option(value=item) #{item}
+        // Button to apply filters
+        button#apply-filters Apply Filters
+        button#clear-filters Clear Filters
