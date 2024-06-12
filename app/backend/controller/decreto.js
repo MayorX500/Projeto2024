@@ -15,6 +15,7 @@ async function getCustom (query) {
 
 // Get all documents
 async function getAll (filters) {
+    console.log(filters);
     let fields = "id, type, code, ministry, publication_date";
     if (filters !== null) {
         fields = filters.fields ? filters.fields : fields;

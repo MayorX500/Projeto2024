@@ -1,6 +1,38 @@
 var express = require('express');
 var router = express.Router();
 const controller = require('../controller/decreto');
+const QueryBuilder = require('../controller/query');
+
+
+
+function build_query_with_custom_filters(filters) {
+  let query = new QueryBuilder();
+  let sort = "";
+  let order = "";
+  for (let key in filters) {
+    console.log(key);
+    if (key == "fields") {
+      query.select(filters[key]);
+    }
+    if (key == "publication_date") {
+      query.where(`publication_date='${filters[key]}'`);
+    }
+    if (key == "type") {
+      query.where(`type = ${filters[key]}`);
+    }
+    if (key == "sort") {
+      sort = filters[key];
+    }
+    if (key == "order") {
+      order = filters[key];
+    }
+    //publication_date type sort order 
+  }
+  if (sort != "" || order != "") {
+    query.orderBy(sort, order);
+}
+  return query.build();
+}
 
 
 // GET all documents of the last day registered
@@ -14,9 +46,9 @@ router.get('/lastday', async function(req, res) {
 
 /* GET all documents */
 router.get('/', async function(req, res) {
-  let filters = req.query ? req.query : null;
-  console.log(filters);
-  let resp = await controller.getAll(filters);
+  let query = build_query_with_custom_filters(req.query);
+  console.log(query);
+  let resp = await controller.getCustom(query);
   res.json(resp);
 });
 
@@ -81,8 +113,4 @@ router.get('/:id', async function(req, res) {
   res.json(resp);
 });
 
-
-
 module.exports = router;
-
-

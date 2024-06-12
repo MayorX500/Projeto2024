@@ -4,12 +4,13 @@
       each publication, pubName in page
         .publication-container
           h1.text-block.block
-            a(href="#") #{pubName}
+            a(href="#") #{pubName} 
+            // Add a link to the publication page with all the docs
           .text-block
             each element in publication.elements
               .block
                 h2
-                  a(href="#") #{element.type} nº #{element.code}
+                  a(href="/specific/" + element.id) #{element.type} nº #{element.code}
                 h3.ministry.uppercase #{element.ministry}
                 p #{element.description}
   

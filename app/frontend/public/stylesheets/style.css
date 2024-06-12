@@ -242,6 +242,11 @@ main {
   text-align: justify;
 }
 
+.blocky div {
+  font-size: 12px;
+  padding: 20px;
+}
+
 .inline-links a {
   display: inline-block; 
   margin-right: 10px;    
