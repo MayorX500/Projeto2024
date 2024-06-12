@@ -18,7 +18,7 @@ a:link {
 }
 
 a:visited {
-  color: #5e1251;
+  color: #125e32;
 }
 
 header {
@@ -222,6 +222,8 @@ main {
 .text-block, .text-block h1, .text-block h2, .text-block h3, .text-block p {
   margin-top: 0; /* Removes top margin from text block titles for alignment */
   background-color: #fff;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .text-block {
@@ -237,6 +239,22 @@ main {
 .text-block p, li {
   margin: 0; /* Removes default margin from paragraphs */
   font-size: 16px;
+  text-align: justify;
+}
+
+.inline-links a {
+  display: inline-block; 
+  margin-right: 10px;    
+}
+
+
+.content p {
+  margin-bottom: 20px; /* Adds space below each paragraph */
+}
+
+.blocky {
+  margin-top: -10px;
+  padding: 20px;
 }
 
 #loginButton {
@@ -250,7 +268,7 @@ main {
   border-radius: 5px; /* Rounded corners */
   cursor: pointer; /* Pointer cursor on hover */
   font-size: 16px; /* Font size */
-  right: 50px;
+  right: 60px;
   width: 80px;
 }
 
@@ -258,9 +276,11 @@ main {
   background-color: #64b3f4; /* Darker background on hover */
 }
 
-@media (max-width: 1024px) {
+/* When minimizing the width of the window the login */
+/* button stops moving at a point */
+@media (max-width: 1200px) {
   #loginButton {
-    left: 950px;
+    right: -20px;
   }
 }
 

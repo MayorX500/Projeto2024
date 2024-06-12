@@ -17,32 +17,29 @@ block content
       main
         include filters
         include first-page
+
+      // Pass the default date to JavaScript
+      script.
+        var defaultDate = '!{fdate}';
+
     script.
       document.addEventListener("DOMContentLoaded", function() {
         var currentUrl = window.location.href; // Gets the full URL
 
-        // If you want to display it in the HTML
         var displayElement = document.getElementById('urlDisplay');
         if (displayElement) {
           displayElement.textContent = currentUrl;
         }
       });
 
-      function openSidebar() {
-        var sidebar = document.getElementById('sidebar');
-        sidebar.style.left = '0px';
-      }
-      
-      function closeSidebar() {
-        var sidebar = document.getElementById('sidebar');
-        sidebar.style.left = '-400px';
-      }
-
       document.addEventListener('DOMContentLoaded', function() {
-        flatpickr("#calendar", {
-          inline: true, // Ensures the calendar is always visible
-          static: true, // Helps in positioning inside the specific 'div'
-        });
+          var calendarInput = document.getElementById('calendar');
+
+          flatpickr(calendarInput, {
+              inline: true,
+              static: true,
+              defaultDate: new Date(defaultDate) || new Date()  // Use the default date or today's date if none provided
+          });
       });
       
       document.getElementById('loginButton').addEventListener('click', function() {
@@ -58,7 +55,6 @@ block content
             static: true,
         });
 
-        // Restore checked filters
         var savedFilters = JSON.parse(localStorage.getItem('selectedFilters'));
         if (savedFilters) {
             savedFilters.forEach(function(filter) {
@@ -67,7 +63,7 @@ block content
         }
 
         if (dateFromUrl) {
-            calendar.setDate(new Date(dateFromUrl)); // Sets the date in the calendar from the URL
+            calendar.setDate(new Date(dateFromUrl));
         } else {
             var savedDate = localStorage.getItem('selectedDate');
             if (savedDate) {
@@ -75,13 +71,11 @@ block content
             }
         }
 
-        // Restore selected date
         var savedDate = localStorage.getItem('selectedDate');
         if (savedDate) {
             calendar.setDate(savedDate);
         }
 
-        // Restore dropdown selection
         var selectedItem = localStorage.getItem('selectedItem');
         if (selectedItem) {
             $('#item-select').val(selectedItem);
@@ -89,16 +83,14 @@ block content
 
         $('#apply-filters').on('click', function() {
           var selectedFilters = [];
-          // Collect all checked filters
           $('input[name="filter"]:checked').each(function() {
               selectedFilters.push($(this).val());
           });
 
           localStorage.setItem('selectedFilters', JSON.stringify(selectedFilters));
 
-          var selectedDate = calendar.selectedDates[0];  // Assumes single date selection
+          var selectedDate = calendar.selectedDates[0];
 
-          // Format the date if it is selected
           if (selectedDate) {
             var localDate = selectedDate.getFullYear() + '-' + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + '-' + selectedDate.getDate().toString().padStart(2, '0');
             localStorage.setItem('selectedDate', localDate);
@@ -107,14 +99,12 @@ block content
             localStorage.removeItem('selectedDate');
           }
 
-          // Fetch the selected option from dropdown
           var selectedItem = $('#item-select').val();
           localStorage.setItem('selectedItem', selectedItem);
           if (selectedItem && selectedItem !== 'Nenhum') {
               selectedFilters.push("item=" + encodeURIComponent(selectedItem));
           }
 
-          // Construct query parameter
           var queryParams = selectedFilters.map(function(filter) {
               if (!filter.includes('date=') && !filter.includes('item=')) {
                   return encodeURIComponent('filter') + '=' + encodeURIComponent(filter);
@@ -122,7 +112,6 @@ block content
               return filter;
           }).join('&');
 
-          // Redirect to the updated URL with query parameters, causing a page reload
           if (queryParams) {
               window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryParams;
           } else {
@@ -130,19 +119,15 @@ block content
           }
         });
 
-        // Clear filters logic
         $('#clear-filters').on('click', function() {
             localStorage.removeItem('selectedFilters');
             localStorage.removeItem('selectedDate');
             localStorage.removeItem('selectedItem');
 
-            // Uncheck all checkboxes
             $('input[name="filter"]:checked').prop('checked', false);
 
-            // Clear selected date in flatpickr
             calendar.clear();
 
-            // Reset dropdown
             $('#item-select').val('Nenhum');
         });
       });

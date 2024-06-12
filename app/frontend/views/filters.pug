@@ -5,13 +5,12 @@
         .calendar-container
             div(id='calendar')
         h3 Categoria:
-        // criar/apagar/editar outra categoria, a lista deverá ser atualizada */
-        each  type in types
+        each item in types
             .filter-option
                 label.custom-checkbox
-                    input(type='checkbox', name='filter', value=type)
+                    input(type='checkbox', name='filter', value=item.type)
                     span.checkmark
-                    | #{type}
+                    | #{item.type}
         h3 Ordenar por:
             .filter-option
                 select(name='itemSelection', id='item-select')

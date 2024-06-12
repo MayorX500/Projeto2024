@@ -1,6 +1,6 @@
 button.menu-button(onclick='openSidebar()')
     i.fa-solid.fa-bars
-img.logo-dre(src="images/Diário_da_República_2023.png", alt="Logo")
+img.logo-dre(src='/images/DR.png', alt="Logo")
 #sidebar
     button.close-button(onclick='closeSidebar()')
         i.fa-solid.fa-times
@@ -20,3 +20,14 @@ form.search
     button(type="submit")
         i.fa.fa-search
 button#loginButton Login
+
+script. 
+    function openSidebar() {
+        var sidebar = document.getElementById('sidebar');
+        sidebar.style.left = '0px';
+      }
+      
+      function closeSidebar() {
+        var sidebar = document.getElementById('sidebar');
+        sidebar.style.left = '-400px';
+      }

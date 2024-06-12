@@ -66,7 +66,7 @@ router.get('/creation_date', async function(req, res) {
 });
 
 /* GET all types of documents */
-router.get('/type', async function(req, res) {
+router.get('/types', async function(req, res) {
   let resp = await controller.getTypes();
   res.json(resp);
 });

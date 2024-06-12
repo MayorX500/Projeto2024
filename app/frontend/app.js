@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 axios.defaults.baseURL = 'http://localhost:3000/api';
-axios.defaults.timeout = 10000;
+axios.defaults.timeout = 30000;
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
