@@ -30,5 +30,8 @@ block content
               -var sep = ' | '
               a #{sep}
               a(href=allData.additional_link) PDF Oficial
+              a #{sep}
+              a(href="#") PDF Não Oficial
           .text-block.blocky
-            div.content!= allData.content
+            div.content
+              p!= allData.content

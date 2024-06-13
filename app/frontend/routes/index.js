@@ -1,72 +1,72 @@
 var express = require('express');
 var router = express.Router();
 var axios = require('axios');
+const entries_per_page = 10;
 
 
 function getAllTypes() {
   return axios.get('http://localhost:3000/types')
-    .then(response => response.data)
+    .then(response => {
+      let t = [{ type: '--Selecionar Categoria--' }];
+      t = t.concat(response.data);
+      return t;
+    })
     .catch(error => {
-      console.error(error);
+      console.error(error); 
       return [];
     });
 }
 
-function pagination(response) {
-  let allData = [];
-  let currentPage = {};
-  let currentCount = 0;
+function separateByPublication(response) {
+  let separatedData = {};
 
-  const sortedData = response.data.sort((a, b) => {
-    // Check if 'publication' property exists in both elements
-    if (a.publication && b.publication) {
-      return a.publication.localeCompare(b.publication);
+  response.data.forEach(element => {
+    if (!separatedData[element.publication]) {
+      separatedData[element.publication] = [];
     }
-    // If 'publication' property is undefined in either element, return 0
-    return 0;
+    separatedData[element.publication].push(element);
   });
 
-  sortedData.forEach(element => {
-    if (!currentPage[element.publication]) {
-      currentPage[element.publication] = { elements: [] };
-    }
+  return separatedData;
+}
 
-    currentPage[element.publication].elements.push(element);
-    currentCount++;
-
-    if (currentCount >= 10) {
-      allData.push(JSON.parse(JSON.stringify(currentPage)));
-      currentPage = {};
-      currentCount = 0;
-      if (element.publication === sortedData[sortedData.indexOf(element) + 1]?.publication) {
-        currentPage[element.publication] = { elements: [] };
-      }
-    }
+async function getPages(url) {
+  let totalPages = 1;
+  totalPages = await axios.get(url).then( response => {
+    let total_entries = parseInt(response.data[0].count);
+    let totalPages = Math.ceil(total_entries / entries_per_page);
+    return totalPages;
+  }).catch(error => {
+    return 1;
   });
-
-  if (Object.keys(currentPage).length > 0) {
-    allData.push(currentPage);
-  }
-  return allData;
+  return totalPages;
 }
 
 
 router.get('/', function(req, res) {
   console.log(req.url);
   let all_types_P = getAllTypes();
+  let page = req.query.page ? req.query.page : 1;
+
+  try {
+    // Remove the page query from the query string so the logic below works
+    delete req.query.page;
+  }
+  catch (error) {
+    console.log('No page query');
+  }
 
   all_types_P.then(all_types => {
     if (Object.keys(req.query).length > 0) {
       // There is a query string
       // Handle the case when there's a query string
-      let url = 'http://localhost:3000/?';
+      let url = `http://localhost:3000/?page=${page}&`;
       let types = '';
       let publication_date = '';
       let order = '';
 
       if (req.query.filter) {
-        types = Array.isArray(req.query.filter) ? req.query.filter.join('&type=') : req.query.filter;
-        types = 'type=' + types; // Add 'type=' prefix to the first type
+        types = "type='" + req.query.filter + "'";
       }
       if (req.query.date) {
         publication_date = types ? '&' : '';
@@ -93,40 +93,25 @@ router.get('/', function(req, res) {
             break;
         }
       }
-      url += types + publication_date + order + '&fields=id,publication,code,ministry,type,description,publication_date';
+
+      url += req.query.allDates ? (types + order) : (types + publication_date + order);
+
+      let fields = 'fields=id,publication,code,ministry,type,description,publication_date';
+      if (types || publication_date || order) {
+        url += '&';
+      }
+      url += fields;     
       console.log(url);
 
-      /*
-      Há um problema com a query string que é passada para o backend.
-      A query string é passada para o backend como um objeto, mas o backend
-      espera que a query string seja passada como uma string.
-      Exemplo:
-      query string: { filter: 'Decreto' }
-      query string esperada: 'filter=Decreto'
-
-
-      Não mas não é só isso. A query string pode ter mais de um valor para o mesmo parâmetro.
-      Exemplo:
-      query string: { filter: ['Decreto', 'Portaria'] }
-      query string esperada: 'filter=Decreto&filter=Portaria'
-
-      É necessário passar a query string como uma string para o backend.
-
-      É preciso ter em atenção ao formato das datas que são passadas na query string.
-      Exemplo:
-      query string: { date: '2021-01-01' }
-      formato esperado: '2021-01-01T00:00:00.000Z'
-      !! A data deve ser passada no formato UTC !!
-      Como existem datas com o mesmo dia mas horas diferentes, é necessário passar a data com a hora.
-      Mas nós queremos todos daquela data independentemente da hora, por isso é necessário passar a data com a hora 00:00:00.000Z
-      */
-
-
       axios.get(url)
-        .then(response => {
-          let allData = pagination(response);
-
-          res.render('index', { allData: allData, types: all_types });
+        .then(async response => {
+          const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+          let allD= separateByPublication(response);
+          console.log(allD);
+          let p = parseInt(page);
+          let count_url = `http://localhost:3000/?${types ? types : ''}${publication_date ? publication_date : ''}&fields=COUNT(id)`;
+          let totalPages = await getPages(count_url);
+          res.render('index', { allData: allD, types: all_types, url: fullUrl, page: p, totalPages: totalPages });
         })
         .catch(error => {
           console.error(error);
@@ -134,15 +119,17 @@ router.get('/', function(req, res) {
         });
     }
     else {
-      axios.get('http://localhost:3000/lastday?fields=id,publication,code,ministry,type,description,publication_date')
-        .then(lastDayResponse => {
+      axios.get(`http://localhost:3000/lastday?fields=id,publication,code,ministry,type,description,publication_date&page=${page}`)
+        .then(async lastDayResponse => {
+          const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
           let fdate = new Date(lastDayResponse.data[0].publication_date);
           fdate.setHours(fdate.getHours() + 1);
           fdate.setUTCHours(0); // Set the timezone to UTC
           fdate = fdate.toISOString().split('T')[0];
-          let allData = pagination(lastDayResponse);
-
-          res.render('index', { allData: allData, types: all_types, fdate: fdate });
+          let allData = separateByPublication(lastDayResponse);
+          let totalPages = await getPages('http://localhost:3000/count?publication_date=' + fdate + '&fields=COUNT(id)');
+          let p = parseInt(page);
+          res.render('index', { allData: allData, types: all_types, fdate: fdate, url: fullUrl, page: p, totalPages: totalPages });
         })
         .catch(error => {
           console.error(error);
@@ -169,6 +156,20 @@ router.get('/specific/:id', function(req, res) {
 });
 
 // criar route para ir para a pagina de docs de uma publicação
-
+router.get('/publication', function(req, res) {
+  const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+  let page = req.query.page ? parseInt(req.query.page) : 1;
+  let pub = req.query.pub ? req.query.pub : 'Diário da República';
+  axios.get(`http://localhost:3000/?publication=${pub}&order=desc&sort=publication_date&page=${page}`)
+    .then(async response => {
+      let totalPages = await getPages(`http://localhost:3000/count?publication=${pub}&fields=COUNT(id)`);
+      let allData = response.data;
+      res.render('publication', { allData: allData, page: page, totalPages: totalPages, pub: pub, url: fullUrl });
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).send('An error occurred');
+    });
+});
 
 module.exports = router;

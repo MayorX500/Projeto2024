@@ -1,64 +1,15 @@
 .right-column
-  each page, pageIndex in allData
-    .page-container(style={display: pageIndex === 0 ? 'block' : 'none'}, data-index=pageIndex)
-      each publication, pubName in page
-        .publication-container
-          h1.text-block.block
-            a(href="#") #{pubName} 
-            // Add a link to the publication page with all the docs
-          .text-block
-            each element in publication.elements
-              .block
-                h2
-                  a(href="/specific/" + element.id) #{element.type} nº #{element.code}
-                h3.ministry.uppercase #{element.ministry}
-                p #{element.description}
-  
-  // Adjust pagination buttons
-  if allData.length > 1
-    .pagination
-      button.prev.button(onclick="switchPage(-1)", disabled=pageIndex === 0) <
-      each _, index in allData
-        button.page-button.button(onclick=`showPage(${index})`, class=index === 0 ? 'button active' : 'button') #{index + 1}
-      button.next.button(onclick="switchPage(1)", disabled=pageIndex === allData.length - 1) >
+  each publicationKey in Object.keys(allData)
+    - const publication = allData[publicationKey]
+    .publication-container
+      h1.text-block.block
+        a(href="/publications/?pub=" + publicationKey) #{publicationKey}
+      .text-block
+        each document in publication
+          .block
+            h2
+              a(href=`/specific/${document.id}`) #{document.type} nº #{document.code}
+            h3.ministry.uppercase #{document.ministry}
+            p #{document.description}
 
-
-script.
-  function showPage(index) {
-    const pages = document.querySelectorAll('.page-container');
-    const paginationButtons = document.querySelectorAll('.pagination .button');
-
-    pages.forEach(page => {
-      page.style.display = page.getAttribute('data-index') == index ? 'block' : 'none';
-    });
-
-    // Update active class on buttons
-    paginationButtons.forEach((button, btnIndex) => {
-      if (btnIndex === index + 1) { // +1 to account for the prev button
-        button.classList.add('active');
-      } else {
-        button.classList.remove('active');
-      }
-    });
-
-    updatePaginationButtons(index);
-  }
-
-  function switchPage(direction) {
-    const pages = Array.from(document.querySelectorAll('.page-container'));
-    const currentPageIndex = pages.findIndex(page => page.style.display === 'block');
-    const newIndex = currentPageIndex + direction;
-    if (newIndex >= 0 && newIndex < pages.length) {
-      showPage(newIndex);
-    }
-  }
-
-  function updatePaginationButtons(currentIndex) {
-    const pages = document.querySelectorAll('.page-container');
-    const prevButton = document.querySelector('.pagination .prev');
-    const nextButton = document.querySelector('.pagination .next');
-    prevButton.disabled = currentIndex === 0;
-    nextButton.disabled = currentIndex === pages.length - 1;
-  }
-
-
+  include pagination

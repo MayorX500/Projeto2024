@@ -3,12 +3,14 @@ var router = express.Router();
 const controller = require('../controller/decreto');
 const QueryBuilder = require('../controller/query');
 
+const entries_per_page = 10;
 
-
+// Function to build a query with custom filters
 function build_query_with_custom_filters(filters) {
   let query = new QueryBuilder();
   let sort = "";
   let order = "";
+  let page = 1;
   for (let key in filters) {
     console.log(key);
     if (key == "fields") {
@@ -17,8 +19,11 @@ function build_query_with_custom_filters(filters) {
     if (key == "publication_date") {
       query.where(`publication_date='${filters[key]}'`);
     }
+    if (key == "publication") {
+      query.where(`publication='${filters[key]}'`);
+    }
     if (key == "type") {
-      query.where(`type = ${filters[key]}`);
+      query.where(`type=${filters[key]}`);
     }
     if (key == "sort") {
       sort = filters[key];
@@ -26,7 +31,9 @@ function build_query_with_custom_filters(filters) {
     if (key == "order") {
       order = filters[key];
     }
-    //publication_date type sort order 
+    if (key == "page") {
+      query.page(filters[key]);
+    }
   }
   if (sort != "" || order != "") {
     query.orderBy(sort, order);
@@ -34,15 +41,22 @@ function build_query_with_custom_filters(filters) {
   return query.build();
 }
 
+router.get('/count', async function(req, res) {
+  let query = build_query_with_custom_filters(req.query);
+  let resp = await controller.getCustom(query);
+  res.json(resp);
+});
 
 // GET all documents of the last day registered
 router.get('/lastday', async function(req, res) {
   var fields = req.query.fields ? req.query.fields : "*";
-  let query = `SELECT ${fields} FROM public.dreapp_document WHERE publication_date = (SELECT MAX(publication_date) FROM public.dreapp_document);`;
+  var page = req.query.page ? req.query.page : 1;
+  let query = `SELECT ${fields} FROM public.dreapp_document WHERE publication_date = (SELECT MAX(publication_date) FROM public.dreapp_document) Limit ${entries_per_page} OFFSET ${(page - 1) * entries_per_page};`;
   //console.log(query);
   let resp = await controller.getCustom(query);
   res.json(resp);
 });
+
 
 /* GET all documents */
 router.get('/', async function(req, res) {
@@ -108,7 +122,6 @@ router.get('/:id', async function(req, res) {
   if (isNaN(req.params.id)) {
     res.status(400).json({ error: 'Invalid ID' });
   }
-  // está a dar erro por causa do FAVICON
   let resp = await controller.getByID(req.params.id);
   res.json(resp);
 });

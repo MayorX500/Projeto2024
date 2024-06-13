@@ -1,0 +1,24 @@
+nav.pagination-container
+    - var baseUrl = url.split('?')[0]
+    - var queryString = url.indexOf('?') !== -1 ? url.split('?')[1] : ''
+    - var params = new URLSearchParams(queryString)
+    - params.delete('page')
+    - var cleanUrl = `${baseUrl}?${params.toString()}`
+    - var separator = params.toString() === '' ? '' : '&'
+
+    if page > 1
+        a.page-item(href=`${cleanUrl}${separator}page=${page - 1}`) <
+
+    - var start = Math.max(1, page - 2)
+    - var end = Math.min(totalPages, page + 2)
+
+    - if (page - 2 < 1) end = Math.min(totalPages, 5)
+    - if (page + 2 > totalPages) start = Math.max(1, totalPages - 4)
+
+    - var i = start
+    while i <= end
+        a.page-item(class=page === i ? 'active' : '', href=`${cleanUrl}${separator}page=${i}`)= i
+        - i++
+
+    if page < totalPages
+        a.page-item(href=`${cleanUrl}${separator}page=${page + 1}`) >

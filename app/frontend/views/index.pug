@@ -40,6 +40,9 @@ block content
               static: true,
               defaultDate: new Date(defaultDate) || new Date()  // Use the default date or today's date if none provided
           });
+
+          $('#filter-select').val('--Selecionar Categoria--');
+          $('#item-select').val('--Selecionar Ordem--');
       });
       
       document.getElementById('loginButton').addEventListener('click', function() {
@@ -55,13 +58,6 @@ block content
             static: true,
         });
 
-        var savedFilters = JSON.parse(localStorage.getItem('selectedFilters'));
-        if (savedFilters) {
-            savedFilters.forEach(function(filter) {
-                $('input[name="filter"][value="' + filter + '"]').prop('checked', true);
-            });
-        }
-
         if (dateFromUrl) {
             calendar.setDate(new Date(dateFromUrl));
         } else {
@@ -71,24 +67,23 @@ block content
             }
         }
 
+        var savedFilter = localStorage.getItem('selectedFilter');
+        if (savedFilter) {
+            $('#item-select').val(savedFilter);
+        }
+
         var savedDate = localStorage.getItem('selectedDate');
         if (savedDate) {
             calendar.setDate(savedDate);
         }
 
-        var selectedItem = localStorage.getItem('selectedItem');
-        if (selectedItem) {
-            $('#item-select').val(selectedItem);
+        var savedItem = localStorage.getItem('selectedItem');
+        if (savedItem) {
+            $('#item-select').val(savedItem);
         }
 
         $('#apply-filters').on('click', function() {
           var selectedFilters = [];
-          $('input[name="filter"]:checked').each(function() {
-              selectedFilters.push($(this).val());
-          });
-
-          localStorage.setItem('selectedFilters', JSON.stringify(selectedFilters));
-
           var selectedDate = calendar.selectedDates[0];
 
           if (selectedDate) {
@@ -101,17 +96,22 @@ block content
 
           var selectedItem = $('#item-select').val();
           localStorage.setItem('selectedItem', selectedItem);
-          if (selectedItem && selectedItem !== 'Nenhum') {
+          if (selectedItem && selectedItem !== '--Selecionar Ordem--') {
               selectedFilters.push("item=" + encodeURIComponent(selectedItem));
           }
 
-          var queryParams = selectedFilters.map(function(filter) {
-              if (!filter.includes('date=') && !filter.includes('item=')) {
-                  return encodeURIComponent('filter') + '=' + encodeURIComponent(filter);
-              }
-              return filter;
-          }).join('&');
+          var selectedFilter = $('#filter-select').val();
+          localStorage.setItem('selectedFilter', selectedFilter);
+          if (selectedFilter && selectedFilter !== '--Selecionar Categoria--') {
+              selectedFilters.push("filter=" + encodeURIComponent(selectedFilter));
+          } 
 
+          var queryParams = selectedFilters.join('&');
+
+          if ($('#allDates').hasClass('clicked')) {
+              queryParams += (queryParams ? '&' : '') + 'allDates=true';
+          }
+          
           if (queryParams) {
               window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryParams;
           } else {
@@ -120,14 +120,19 @@ block content
         });
 
         $('#clear-filters').on('click', function() {
-            localStorage.removeItem('selectedFilters');
+            localStorage.removeItem('selectedFilter');
             localStorage.removeItem('selectedDate');
             localStorage.removeItem('selectedItem');
 
-            $('input[name="filter"]:checked').prop('checked', false);
-
             calendar.clear();
+            $('#allDates').removeClass('clicked');
+            $('#item-select').val('--Selecionar Ordem--');
+            $('#filter-select').val('--Selecionar Categoria--');
+        });
 
-            $('#item-select').val('Nenhum');
+        $('#allDates').on('click', function() {
+            $(this).toggleClass('clicked');
+            localStorage.removeItem('selectedDate');
+            calendar.clear();
         });
       });
