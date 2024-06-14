@@ -18,10 +18,9 @@
 - The application will have a import system that allows the admin to import all information from a zip file. (Restore system)
 
 #### Technologies
-- Frontend: Node.js, React, HTML, CSS, JavaScript
+- Frontend: Node.js, HTML, CSS, JavaScript
 - Backend: Node.js, Express, PostgreSQL
 
 #### Team
-- [Miguel Gomes]
 - [Filipa Gomes]
-
+- [Miguel Gomes]
