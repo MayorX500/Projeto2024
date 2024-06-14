@@ -1,3 +1,18 @@
+const blacklistedWords = [
+    'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'TRUNCATE', 'ALTER', 'GRANT', 'REVOKE',
+    'UNION', 'OR', 'AND', '--', ';', '/*', '*/', 'xp_', 'exec', 'sp_'
+];
+
+function validateAgainstBlacklist(input) {
+    const upperInput = input.toUpperCase();
+    for (const word of blacklistedWords) {
+        if (upperInput.includes(word)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 class QueryBuilder {
     constructor() {
         this.entries_per_page = 10;
@@ -13,6 +28,11 @@ class QueryBuilder {
 
     select(fields) {
         if (Array.isArray(fields)) {
+            for (const field of fields) {
+                if (!validateAgainstBlacklist(field)) {
+                    return this;
+                }
+            }
             this.query.select.push(...fields);
         } else {
             this.query.select.push(fields);
@@ -21,24 +41,32 @@ class QueryBuilder {
     }
 
     from(table) {
-        this.query.from = table;
-        return this;
+        if (validateAgainstBlacklist(table)) {
+            this.query.from = table;
+            return this;
+        }
     }
 
     where(condition) {
-        this.query.where.push(condition);
-        return this;
+        if (validateAgainstBlacklist(condition)) {
+            this.query.where.push(condition);
+            return this;
+        }
     }
 
     orderBy(field, direction = 'ASC') {
-        this.query.orderBy.push(`${field} ${direction}`);
-        return this;
+        if (validateAgainstBlacklist(field) && validateAgainstBlacklist(direction)){
+            this.query.orderBy.push(`${field} ${direction}`);
+            return this;
+        }
     }
 
     page(page) {
-        this.paginate = true;
-        this.query.page = page;
-        return this;
+        if (validateAgainstBlacklist(page)) {
+            this.paginate = true;
+            this.query.page = page;
+            return this;
+        }
     }
 
     build() {

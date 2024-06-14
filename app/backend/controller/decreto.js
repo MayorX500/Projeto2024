@@ -26,14 +26,14 @@ async function getAll (filters) {
 
 // Get a document by its ID
 async function getByID (id) {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d JOIN public.dreapp_documenttext dt ON dt.reference_id = d.id WHERE  d.id =  ${id} ;` );
+    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON dt.reference_id = d.id WHERE  d.id =  ${id} ;` );
     return query.rows ? query.rows : null;
 }
 
 // Get documents by their date
 async function getDate (date) {
     date = date.toString();
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE  d.publication_date =  "${date}" ;` );
+    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE  d.publication_date =  "${date}" ;` );
     return query.rows ? query.rows : null;
 }
 
@@ -41,7 +41,7 @@ async function getDate (date) {
 // FILTERS
 // Get documents by their type
 async function getByType (type) {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE  d.type =  ${type} ;` );
+    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE  d.type =  ${type} ;` );
     return query.rows ? query.rows : null;
 }
 
@@ -54,13 +54,13 @@ async function getByCode (code) {
         fields = "d.*, dt.reference_id, dt.created_at, dt.url, dt.content";
 
     }
-    let query = await Client.query ( `SELECT  ${fields} FROM public.dreapp_document d JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ${no_code};` );
+    let query = await Client.query ( `SELECT  ${fields} FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ${no_code};` );
     return query.rows ? query.rows : null;
 }
 
 // Get documents by publication year
 async function getByYear (year) {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE EXTRACT(YEAR FROM d.publication_date) = ${year} ;` );
+    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE EXTRACT(YEAR FROM d.publication_date) = ${year} ;` );
     return query.rows ? query.rows : null;
 }
 
@@ -74,13 +74,13 @@ async function getLast (limit, fields) {
 // SORTS
 // Get documents sorted by their publication date
 async function getByDate () {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ORDER BY d.publication_date;` );
+    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ORDER BY d.publication_date;` );
     return query.rows ? query.rows : null;
 }
 
 // Get documents sorted by their creation date
 async function getByCreationDate () {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ORDER BY d.creation_date;` );
+    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ORDER BY d.creation_date;` );
     return query.rows ? query.rows : null;
 }
 

@@ -10,9 +10,7 @@ function build_query_with_custom_filters(filters) {
   let query = new QueryBuilder();
   let sort = "";
   let order = "";
-  let page = 1;
   for (let key in filters) {
-    console.log(key);
     if (key == "fields") {
       query.select(filters[key]);
     }
