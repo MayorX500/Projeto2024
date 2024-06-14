@@ -1,6 +1,7 @@
 button.menu-button(onclick='openSidebar()')
     i.fa-solid.fa-bars
-img.logo-dre(src='/images/DR.png', alt="Logo")
+a(href="/")
+    img.logo-dre(src='/images/DR.png', alt="Logo")
 #sidebar
     button.close-button(onclick='closeSidebar()')
         i.fa-solid.fa-times
@@ -14,7 +15,7 @@ img.logo-dre(src='/images/DR.png', alt="Logo")
             a(href="#") Contactos
         li
             a(href="#") Sobre
-form.search
+//form.search
     div.input-wrapper
         input(type="text", placeholder="Search...")
     button(type="submit")

@@ -164,6 +164,7 @@ router.get('/publication', function(req, res) {
     .then(async response => {
       let totalPages = await getPages(`http://localhost:3000/count?publication=${pub}&fields=COUNT(id)`);
       let allData = response.data;
+      console.log(allData);
       res.render('publication', { allData: allData, page: page, totalPages: totalPages, pub: pub, url: fullUrl });
     })
     .catch(error => {

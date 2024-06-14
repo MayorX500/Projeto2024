@@ -9,6 +9,12 @@ body, html {
   overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
+nav.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 a {
   text-decoration: none;
 }
@@ -47,7 +53,6 @@ a:visited {
   color: white;
 }
 
-
 header {
   display: flex;
   background-color: #ffff;
@@ -55,22 +60,22 @@ header {
   padding: 10px 20px;
   height: 80px;
   align-items: center;
-  justify-content: space-between;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
 }
 
-.logo-dre {
+
+header a {
   display: flex;
   align-items: center;
+}
+
+img.logo-dre {
+  display: flex;
+  align-items: flex;
   height: 50px;
   margin-left: 90px;
   padding-right: 40px;
-}
-
-.logo-dre img {
-  width: 20px;
-  height: 20px;
 }
 
 .menu-button {
@@ -220,7 +225,7 @@ main {
 }
 
 .right-column {
-  margin: 40px 80px 20px 20px;
+  margin: 40px 80px 20px 40px;
   width: calc(100% - 80px); /* Adjust to prevent overflow */
 }
 
@@ -290,8 +295,7 @@ main {
 }
 
 #loginButton {
-  position: relative;
-  flex-shrink: 0;
+  margin-left: auto; /* Aligns the button to the right */
   margin-bottom: 10px;
   padding: 8px 15px; /* Adjust padding as needed */
   background-color: #569ff7; /* Background color of the button */
@@ -300,8 +304,9 @@ main {
   border-radius: 5px; /* Rounded corners */
   cursor: pointer; /* Pointer cursor on hover */
   font-size: 16px; /* Font size */
-  right: 60px;
   width: 80px;
+  position: relative;
+  right: 80px; /* Adjusted to prevent overflow due to the width */
 }
 
 #loginButton:hover {
@@ -310,9 +315,9 @@ main {
 
 /* When minimizing the width of the window the login */
 /* button stops moving at a point */
-@media (max-width: 1200px) {
+@media (max-width: 600px) {
   #loginButton {
-    right: -20px;
+    right: -80px;
   }
 }
 
