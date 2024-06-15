@@ -22,9 +22,13 @@ block content
             h3 Publicação:  
               a(href="/publication?pub=" + allData.publication) #{allData.publication}
             h3 Emissor:  
-              a(href="#") #{allData.ministry}
+              a(href="/ministry?min=" + allData.ministry) #{allData.ministry}
             h3 Data de publicação:  
-              a(href="#") #{allData.publication_date}
+              - var date = new Date(allData.publication_date)
+              - date.setHours(date.getHours() + 1)
+              - date.setUTCHours(0); // Set the timezone to UTC
+              - date = date.toISOString().split('T')[0];
+              a(href="/?date=" + date) #{date}
             h3.inline-links
               a(href=allData.url) Página Oficial
               -var sep = ' | '

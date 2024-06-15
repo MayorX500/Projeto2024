@@ -41,8 +41,9 @@ block content
               defaultDate: new Date(defaultDate) || new Date()  // Use the default date or today's date if none provided
           });
 
-          $('#filter-select').val('--Selecionar Categoria--');
+          $('#type-select').val('--Selecionar Categoria--');
           $('#item-select').val('--Selecionar Ordem--');
+          $('#ministry-select').val('--Selecionar Emissor--');
       });
       
       document.getElementById('loginButton').addEventListener('click', function() {
@@ -67,9 +68,9 @@ block content
             }
         }
 
-        var savedFilter = localStorage.getItem('selectedFilter');
-        if (savedFilter) {
-            $('#filter-select').val(savedFilter);
+        var savedType = localStorage.getItem('selectedType');
+        if (savedType) {
+            $('#type-select').val(savedType);
         }
 
         var savedDate = localStorage.getItem('selectedDate');
@@ -80,6 +81,11 @@ block content
         var savedItem = localStorage.getItem('selectedItem');
         if (savedItem) {
             $('#item-select').val(savedItem);
+        }
+
+        var savedMin = localStorage.getItem('selectedMinistry');
+        if (savedMin) {
+            $('#ministry-select').val(savedMin);
         }
 
         $('#apply-filters').on('click', function() {
@@ -100,11 +106,17 @@ block content
               selectedFilters.push("item=" + encodeURIComponent(selectedItem));
           }
 
-          var selectedFilter = $('#filter-select').val();
-          localStorage.setItem('selectedFilter', selectedFilter);
-          if (selectedFilter && selectedFilter !== '--Selecionar Categoria--') {
-              selectedFilters.push("filter=" + encodeURIComponent(selectedFilter));
-          } 
+          var selectedType = $('#type-select').val();
+          localStorage.setItem('selectedType', selectedType);
+          if (selectedType && selectedType !== '--Selecionar Categoria--') {
+              selectedFilters.push("type=" + encodeURIComponent(selectedType));
+          }
+
+          var selectedMinistry = $('#ministry-select').val();
+          localStorage.setItem('selectedMinistry', selectedMinistry);
+          if (selectedMinistry && selectedMinistry !== '--Selecionar Emissor--') {
+              selectedFilters.push("ministry=" + encodeURIComponent(selectedMinistry));
+          }
 
           var queryParams = selectedFilters.join('&');
 
@@ -120,14 +132,16 @@ block content
         });
 
         $('#clear-filters').on('click', function() {
-            localStorage.removeItem('selectedFilter');
+            localStorage.removeItem('selectedType');
             localStorage.removeItem('selectedDate');
             localStorage.removeItem('selectedItem');
+            localStorage.removeItem('selectedMinistry');
 
             calendar.clear();
             $('#allDates').removeClass('clicked');
             $('#item-select').val('--Selecionar Ordem--');
-            $('#filter-select').val('--Selecionar Categoria--');
+            $('#type-select').val('--Selecionar Categoria--');
+            $('#ministry-select').val('--Selecionar Emissor--');
         });
 
         $('#allDates').on('click', function() {

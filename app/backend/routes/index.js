@@ -20,6 +20,9 @@ function build_query_with_custom_filters(filters) {
     if (key == "publication") {
       query.where(`publication='${filters[key]}'`);
     }
+    if (key == "ministry") {
+      query.where(`ministry='${filters[key]}'`);
+    }
     if (key == "type") {
       query.where(`type=${filters[key]}`);
     }
@@ -112,6 +115,12 @@ router.get('/creation_date', async function(req, res) {
 /* GET all types of documents */
 router.get('/types', async function(req, res) {
   let resp = await controller.getTypes();
+  res.json(resp);
+});
+
+/* GET all ministries */
+router.get('/ministries', async function(req, res) {
+  let resp = await controller.getMinistries();
   res.json(resp);
 });
 

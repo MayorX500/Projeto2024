@@ -91,6 +91,12 @@ async function getTypes () {
     return query.rows ? query.rows : null;
 }
 
+// Get all ministries without repetition
+async function getMinistries () {
+    let query = await Client.query ( `SELECT DISTINCT ministry FROM public.dreapp_document;` );
+    return query.rows ? query.rows : null;
+}
+
 module.exports = {
     getCustom,
     getByID,
@@ -101,6 +107,7 @@ module.exports = {
     getByDate,
     getLast,
     getDate,
+    getMinistries,
     getByCreationDate,
     getTypes
 };

@@ -7,9 +7,14 @@
         button#allDates Todas as Datas
         h3 Categoria:
             .filter-option
-                select(name='filter', id='filter-select')
+                select(name='typeSelection', id='type-select')
                     each item in types
                         option(value=item.type)= item.type
+        h3 Emissor:
+            .filter-option
+                select(name='ministrySelection', id='ministry-select')
+                    each item in min
+                        option(value=item.ministry)= item.ministry
         h3 Ordenar por:
             .filter-option
                 select(name='itemSelection', id='item-select')
