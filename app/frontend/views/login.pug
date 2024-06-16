@@ -13,25 +13,42 @@ block content
       script(src="https://code.jquery.com/jquery-3.6.0.min.js")
     body
       header
-        button.menu-button
-            i.fa-solid.fa-bars(style="color: white")
-        a(href="/")
-            img.logo-dre(src='/images/DR.png', alt="Logo")
+        include header  
       main
         .right-column
             .text-block 
                 h1.blocky Área de Autenticação
             .text-block.form
-                form(action="/login", method="POST")
-                    label(for="email") Email:
-                        input(type="email", name="email", id="email", required)
-                    label(for="password") Password:
-                        input(type="password", name="password", id="password", required)
+                form(action="/login", method="POST", style='display: flex; flex-direction: column; align-items: center;')
+                    label#login(for="nif") NIF:
+                        input(type="nif", name="nif", id="nif", required)
+                    label#login(for="password") Password:
+                        .password-container
+                            input(type="password", name="password", id="password", required)
+                            button#eyePassword1(type="button",class="unhide-button")
+                                i(class="fa-solid fa-eye")
                     .inline-block(style="margin-top: -25px; margin-bottom: 30px;")
                         a(href="/register") Registar
                         -var sep = ' | '
                         a #{sep}
-                        a(href="/forgot-password") Esqueceu-se da password?
+                        a(href="") Esqueceu-se da password?
                     button(type="submit") Entrar
-                    
+      script.
+        $(document).ready(function(){
+          $('#eyePassword1').click(function() {
+            /*when click show password and when clicked again hide it*/
+            var password = $('#password');
+            var type = password.attr('type') === 'password' ? 'text' : 'password';
+            password.attr('type', type);
 
+            // Change the icon
+            var icon = $('#eyePassword1 i');
+            if(icon.hasClass('fa-eye')) {
+              icon.removeClass('fa-eye');
+              icon.addClass('fa-eye-slash');
+            } else {
+              icon.removeClass('fa-eye-slash');
+              icon.addClass('fa-eye');
+            }
+          });
+        });

@@ -1,0 +1,113 @@
+extends layout
+
+block content
+  html(lang="en")
+    head
+      meta(charset="UTF-8")
+      meta(name="viewport", content="width=device-width, initial-scale=1.0")
+      link(rel="stylesheet", href="stylesheets/style.css")
+      link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css')
+      link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css')
+      script(src='https://cdn.jsdelivr.net/npm/flatpickr')
+      link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap")
+      script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+    body
+      header
+        include header  
+      main
+        .right-column
+            .text-block 
+                h1.blocky Registar um Novo Utilizador
+            .text-block.form
+                form(action="/register", method="POST", style='display: flex; flex-direction: column; align-items: center;')
+                    label#login(for="nif") NIF:
+                        input(type="text", name="nif", id="nif", required)
+                    label#login(for="password") Password:
+                        .password-container
+                            input(type="password", name="password", id="password", required)
+                            button#eyePassword1(type="button",class="unhide-button")
+                                i(class="fa-solid fa-eye")
+                    label#login(for="password2") Confirmar Password:
+                        .password-container
+                            input(type="password", name="password2", id="password2", required)
+                            button#eyePassword2(type="button", class="unhide-button")
+                                i(class="fa-solid fa-eye")
+                    label#login(for="name") Nome Completo:
+                        input(type="text", name="name", id="name", required)
+                    label#login(for="email") Email:
+                        input(type="email", name="email", id="email", required)
+                    button(type="submit") Registar
+                    p#error-message(style="display: none;")
+                        i(class="fa-solid fa-circle-exclamation")
+                        span.error-text
+
+                    script.
+
+                        function checkPasswords() {
+                            var password = $('#password').val();
+                            var password2 = $('#password2').val();
+
+                            if (!!{success} && "#{error_message}" !== "" && password.length < 1) {
+                                $('#error-message .error-text').text("  #{error_message}");
+                                $('#error-message').show();
+                            } else if(password.length < 8 && password.length > 0) {
+                                $('#error-message .error-text').text('  A senha deve ter pelo menos 8 caracteres.');
+                                $('#error-message').show();
+                            } else if(password !== password2) {
+                                $('#error-message .error-text').text('  As senhas não coincidem. Por favor, tente novamente.');
+                                $('#error-message').show();
+                            } else {
+                                $('#error-message').hide();
+                            }
+                        }
+                        // don't submit form if passwords don't match, alter some text in the form after the password2 input to show the error (in red)
+
+                        $(document).ready(function(){
+                            checkPasswords();
+
+                            $('#password, #password2').on('input', checkPasswords);
+
+                            $('form').submit(function(e){
+                                var password = $('#password').val();
+                                var password2 = $('#password2').val();
+
+                                if(password !== password2 || password.length < 8){
+                                    e.preventDefault();
+                                }
+                            });
+
+                            $('#eyePassword1').click(function() {
+                                /*when click show password and when clicked again hide it*/
+                                var password = $('#password');
+                                var type = password.attr('type') === 'password' ? 'text' : 'password';
+                                password.attr('type', type);
+
+                                // Change the icon
+                                var icon = $('#eyePassword1 i');
+                                if(icon.hasClass('fa-eye')) {
+                                    icon.removeClass('fa-eye');
+                                    icon.addClass('fa-eye-slash');
+                                } else {
+                                    icon.removeClass('fa-eye-slash');
+                                    icon.addClass('fa-eye');
+                                }
+                            });
+
+                            $('#eyePassword2').click(function() {
+                                /*when click show password and when clicked again hide it*/
+                                var password = $('#password2');
+                                var type = password.attr('type') === 'password' ? 'text' : 'password';
+                                password.attr('type', type);
+
+                                // Change the icon
+                                var icon = $('#eyePassword2 i');
+                                if(icon.hasClass('fa-eye')) {
+                                    icon.removeClass('fa-eye');
+                                    icon.addClass('fa-eye-slash');
+                                } else {
+                                    icon.removeClass('fa-eye-slash');
+                                    icon.addClass('fa-eye');
+                                }
+                            });
+
+                        });

@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var axios = require('axios');
+const verifyLogin = require('../auth/protected');
+const bcrypt = require('bcrypt');
 const entries_per_page = 10;
 
 
@@ -124,7 +126,7 @@ router.get('/', function(req, res) {
           let allData = separateByPublication(lastDayResponse);
           let totalPages = await getPages('http://localhost:3000/count?publication_date=' + fdate + '&fields=COUNT(id)');
           let p = parseInt(page);
-          res.render('index', { allData: allData, types: all_types, fdate: fdate, url: fullUrl, page: p, totalPages: totalPages });
+          res.render('index', { allData: allData, types: all_types, fdate: fdate, url: fullUrl, page: p, totalPages: totalPages});
         })
         .catch(error => {
           console.error(error);
@@ -185,17 +187,79 @@ router.get('/ministry', function(req, res) {
 });
 
 
-router.get('/favorites', function(req, res) {
-  let allData = ["doc1", "doc2", "doc3", "doc4", "doc5", "doc6", "doc7", "doc8", "doc9", "doc10"];
+router.get('/favorites', verifyLogin, function(req, res) {
+  let token = req.cookies.token;
+
   res.render('favorites', { allData: allData});
   }
 );
 
-
-router.get('/login', function(req, res) {
-  res.render('login');
+router.get('/logout', function(req, res) {
+  res.clearCookie('token');
+  res.redirect('/');
 });
 
+router.post('/login', async function(req, res) {
+  console.log(req.body);
+  let valid = axios.post('http://localhost:3004/auth/login', { id: req.body.nif, password: req.body.password });
+  valid.then(response => {
+    if (response.data.success) {
+      res.cookie('token', response.data.token, { httpOnly: false, secure: false});
+      res.redirect('/');
+    }
+    else {
+      res.render('login', { error_message: response.data.token });
+    }
+  })
+
+});
+
+router.get('/login', function(req, res) {
+  res.render('login', { error_message: '' });
+});
+
+router.post('/register', async function(req, res) {
+  let user_builder = { id: req.body.nif, password: req.body.password, email: req.body.email, full_name: req.body.name };
+
+  let created_user = await axios.post('http://localhost:3004/auth/register', user_builder);
+  if (created_user.data.success) {
+    res.redirect('/login');
+  }
+  else {
+    let options = {success: created_user.data.success, error_message: created_user.data.message};
+    res.render('register', options);
+  }
+});
+
+router.get('/register', function(req, res) {
+  res.render('register', {success: true, error_message: ''});
+});
+
+
+router.get('/create', function(req, res) {
+  res.render('createDoc');
+});
+
+router.get('/edit/:id', function(req, res) {
+  try {
+    axios.get('http://localhost:3000/' + req.params.id)
+      .then(response => {
+        let date = new Date(response.data[0].publication_date);
+        date.setHours(date.getHours() + 1);
+        date = date.toISOString().split('T')[0];
+        response.data[0].publication_date = date;
+        res.render('editDoc', { doc: response.data[0]});
+      })
+      .catch(error => {
+        console.error(error);
+        res.status(500).send('An error occurred');
+      });
+  }
+  catch (error) {
+    console.log('No id parameter');
+    res.status(500).send('An error occurred');
+  }
+});
 
 
 module.exports = router;

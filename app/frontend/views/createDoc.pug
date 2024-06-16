@@ -1,0 +1,43 @@
+extends layout
+
+block content
+  html(lang="en")
+    head
+      meta(charset="UTF-8")
+      meta(name="viewport", content="width=device-width, initial-scale=1.0")
+      link(rel="stylesheet", href="/stylesheets/style.css")
+      link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css')
+      link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css')
+      script(src='https://cdn.jsdelivr.net/npm/flatpickr')
+      link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap")
+      script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+    body
+      header
+        include header
+    main
+      .right-column
+        .text-block
+          h1.blocky Create a New Document
+        .text-block.form.container
+          form(action="/submit_document" method="post")
+            label(for="type") Categoria:
+              input(type="text", name="type", required=true)
+            label(for="code") Código:
+              input#code(name="code", type="text", required=true)
+            label(for="publication") Publicação:
+              input#publication(name="publication", type="text", required=true)
+            label(for="ministry") Emissor:
+              input#ministry(name="ministry", type="text", required=true)
+            label(for="publication_date") Data de Publicação:
+              input#publication_date(name="publication_date", type="date", required=true)
+            label(for="official_page") URL Página Oficial:
+              input#official_page(name="official_page", type="url")
+            label(for="official_pdf") PDF Oficial:
+              input#official_pdf(name="official_pdf", type="url")
+            label(for="unofficial_pdf") PDF Não Oficial:
+              input#unofficial_pdf(type="file", name="unofficial_pdf")
+            label(for="description") Descrição:
+              input#description(name="description", type="text", required=true)
+            label(for="content") Conteúdo:
+              textarea#content(name="content", required=true)
+            button(type="submit") Criar Documento

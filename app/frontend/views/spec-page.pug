@@ -16,8 +16,9 @@ block content
         include header
       main
         .right-column
-          .text-block 
+          .text-block(style='display: flex; justify-content: space-between; align-items: center;')
             h1.blocky #{allData.type} nº #{allData.code}
+            button#edit-button(type="button") Editar
           .text-block.blocky
             h3 Publicação:  
               a(href="/publication?pub=" + allData.publication) #{allData.publication}
@@ -39,3 +40,25 @@ block content
           .text-block.blocky
             div.content
               p!= allData.content
+              
+      script.
+        document.addEventListener('DOMContentLoaded', function() {
+          editB();
+        });
+
+
+        function handleEditRedirect(id) {
+          window.location.href = '/edit/' + id;
+        }
+
+        function editB() {
+          if (isLoggedIn()) {
+            document.getElementById('edit-button').addEventListener('click', function() {
+              handleEditRedirect('#{allData.id}');
+            });
+          } else {
+            document.getElementById('edit-button').style.display = 'none';
+          }
+        }
+
+        

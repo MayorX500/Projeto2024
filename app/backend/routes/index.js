@@ -58,6 +58,16 @@ router.get('/lastday', async function(req, res) {
   res.json(resp);
 });
 
+// Debug Query
+
+router.get('/debug', async function(req, res) {
+
+  let query = "SELECT * FROM public.dreapp_document WHERE id=333 ORDER BY publication_date DESC LIMIT 10 OFFSET 0;"
+  let resp = await controller.getCustom(query);
+  res.json(resp);
+});
+
+
 
 /* GET all documents */
 router.get('/', async function(req, res) {

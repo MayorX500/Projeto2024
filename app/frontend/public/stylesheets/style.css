@@ -1,3 +1,4 @@
+
 body, html {
   height: 100%;
   margin: 0;
@@ -27,12 +28,53 @@ a:visited {
   color: #125e32;
 }
 
+#edit-button {
+  background-color: #569ff7;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 30px;
+  margin-top: 20px;
+}
+
+#edit-button:hover {
+  background-color: #64b3f4;
+}
+
+#login {
+  width : 320px;
+}
+
+.password-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 380px;
+}
+
+.password-container input {
+  width: 320px;
+  margin-right: 5px;
+}
 
 .bottom-options {
   display: flex;
   flex-direction: column;
   gap: 20px; 
   align-items: center;
+}
+
+#eyePassword1, #eyePassword2 {
+  position: relative;
+  left: -50px;
+  top: -5px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #919191;
 }
 
 .bottom-options div {
@@ -77,24 +119,37 @@ div.line {
 .form label {
   font-size: 16px;
   margin-bottom: 10px;
-  width: 40px;
+  width: calc(100% - 60px); /* Adjusted to prevent overflow */
+  max-width: 1000px;
+}
+
+#publication_date {
+  margin-left: 20px;
+  width: 180px; /* Adjusted to prevent overflow */
 }
 
 form {
   flex-direction: column;
   display: flex;
   align-items: flex-start;
+  width: 100%;
 }
 
-.form input {
+.form form {
+  flex-direction: column;
+  display: flex;
+  align-items: flex-start;
+}
+
+
+.form input, .form textarea, .form select {
+  width: 100%;  /* This will make the input take the full width of its container */
   padding: 7px;
   border-radius: 5px;
-  border-color: #626262;
-  border-style: solid;
-  border-width: 0.01cm;
+  border: 1px solid #626262; /* updated for clarity */
   margin-bottom: 20px;
-  font-size: 14px;
-  width: 300px;
+  font-size: 18px;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 .form form button {
@@ -258,7 +313,7 @@ main {
 
 .form {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: start; /* Aligns content to the start of the flex container */
 }
 
@@ -440,9 +495,30 @@ main {
   font-size: 17px;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.container label {
+  font-size: 18px;
+  margin-bottom: 1px;
+}
+
+.container input {
+  font-size: 18px;
+  width: 100%;
+}
+
+.container textarea {
+  font-size: 18px;
+  height: 120px;
+}
+
 select {
-  font-size: 16px;
-  width: 220px;
+  font-size: 18px;
+  width: 260px;
 }
 
 option {
@@ -460,7 +536,7 @@ option {
   font-size: 16px;
   margin-top: 40px;
   margin-bottom: 20px;
-  margin-right: 10px; /* Adjusted to prevent overflow */
+  margin-right: 20px; /* Adjusted to prevent overflow */
 }
 
 .filters button:hover {
@@ -500,4 +576,16 @@ option {
 .right-column button:hover {
   background-color: #8fccff;
   color: white;
+}
+
+p#error-message {
+  font-size: large;
+  color: rgb(185, 8, 8);
+  margin-top: 10px;
+}
+
+p#error-message :hover{
+  font-size: large;
+  color: rgb(185, 8, 8);
+  margin-top: 10px;
 }
