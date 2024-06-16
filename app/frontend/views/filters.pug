@@ -10,11 +10,6 @@
                 select(name='typeSelection', id='type-select')
                     each item in types
                         option(value=item.type)= item.type
-        h3 Emissor:
-            .filter-option
-                select(name='ministrySelection', id='ministry-select')
-                    each item in min
-                        option(value=item.ministry)= item.ministry
         h3 Ordenar por:
             .filter-option
                 select(name='itemSelection', id='item-select')
@@ -24,3 +19,119 @@
         // Button to apply filters
         button#apply-filters Aplicar Filtros
         button#clear-filters Limpar Filtros
+
+        script.
+            var defaultDate = '!{fdate}';
+            document.addEventListener("DOMContentLoaded", function() {
+                var currentUrl = window.location.href; // Gets the full URL
+
+                var displayElement = document.getElementById('urlDisplay');
+                if (displayElement) {
+                displayElement.textContent = currentUrl;
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var calendarInput = document.getElementById('calendar');
+
+                flatpickr(calendarInput, {
+                    inline: true,
+                    static: true,
+                    defaultDate: new Date(defaultDate) || new Date()  // Use the default date or today's date if none provided
+                });
+
+                $('#type-select').val('--Selecionar Categoria--');
+                $('#item-select').val('--Selecionar Ordem--');
+            });
+            
+            document.getElementById('loginButton').addEventListener('click', function() {
+                window.location.href = '/#'; // Redirects to the login page
+            });
+
+            $(document).ready(function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const dateFromUrl = urlParams.get('date'); 
+
+                var calendar = flatpickr("#calendar", {
+                    inline: true,
+                    static: true,
+                });
+
+                if (dateFromUrl) {
+                    calendar.setDate(new Date(dateFromUrl));
+                } else {
+                    var savedDate = localStorage.getItem('selectedDate');
+                    if (savedDate) {
+                        calendar.setDate(new Date(savedDate));
+                    }
+                }
+
+                var savedType = localStorage.getItem('selectedType');
+                if (savedType) {
+                    $('#type-select').val(savedType);
+                }
+
+                var savedDate = localStorage.getItem('selectedDate');
+                if (savedDate) {
+                    calendar.setDate(savedDate);
+                }
+
+                var savedItem = localStorage.getItem('selectedItem');
+                if (savedItem) {
+                    $('#item-select').val(savedItem);
+                }
+
+                $('#apply-filters').on('click', function() {
+                var selectedFilters = [];
+                var selectedDate = calendar.selectedDates[0];
+
+                if (selectedDate) {
+                    var localDate = selectedDate.getFullYear() + '-' + (selectedDate.getMonth() + 1).toString().padStart(2, '0') + '-' + selectedDate.getDate().toString().padStart(2, '0');
+                    localStorage.setItem('selectedDate', localDate);
+                    selectedFilters.push("date=" + encodeURIComponent(localDate));
+                } else {
+                    localStorage.removeItem('selectedDate');
+                }
+
+                var selectedItem = $('#item-select').val();
+                localStorage.setItem('selectedItem', selectedItem);
+                if (selectedItem && selectedItem !== '--Selecionar Ordem--') {
+                    selectedFilters.push("item=" + encodeURIComponent(selectedItem));
+                }
+
+                var selectedType = $('#type-select').val();
+                localStorage.setItem('selectedType', selectedType);
+                if (selectedType && selectedType !== '--Selecionar Categoria--') {
+                    selectedFilters.push("type=" + encodeURIComponent(selectedType));
+                }
+
+                var queryParams = selectedFilters.join('&');
+
+                if ($('#allDates').hasClass('clicked')) {
+                    queryParams += (queryParams ? '&' : '') + 'allDates=true';
+                }
+                
+                if (queryParams) {
+                    window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryParams;
+                } else {
+                    window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                }
+                });
+
+                $('#clear-filters').on('click', function() {
+                    localStorage.removeItem('selectedType');
+                    localStorage.removeItem('selectedDate');
+                    localStorage.removeItem('selectedItem');
+
+                    calendar.clear();
+                    $('#allDates').removeClass('clicked');
+                    $('#item-select').val('--Selecionar Ordem--');
+                    $('#type-select').val('--Selecionar Categoria--');
+                });
+
+                $('#allDates').on('click', function() {
+                    $(this).toggleClass('clicked');
+                    localStorage.removeItem('selectedDate');
+                    calendar.clear();
+                });
+            });

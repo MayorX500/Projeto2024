@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  html(lang="en")
+    head
+      meta(charset="UTF-8")
+      meta(name="viewport", content="width=device-width, initial-scale=1.0")
+      link(rel="stylesheet", href="stylesheets/style.css")
+      link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css')
+      link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css')
+      script(src='https://cdn.jsdelivr.net/npm/flatpickr')
+      link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap")
+      script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+    body
+      header
+        button.menu-button
+            i.fa-solid.fa-bars(style="color: white")
+        a(href="/")
+            img.logo-dre(src='/images/DR.png', alt="Logo")
+      main
+        .right-column
+            .text-block 
+                h1.blocky Área de Autenticação
+            .text-block.form
+                form(action="/login", method="POST")
+                    label(for="email") Email:
+                        input(type="email", name="email", id="email", required)
+                    label(for="password") Password:
+                        input(type="password", name="password", id="password", required)
+                    .inline-block(style="margin-top: -25px; margin-bottom: 30px;")
+                        a(href="/register") Registar
+                        -var sep = ' | '
+                        a #{sep}
+                        a(href="/forgot-password") Esqueceu-se da password?
+                    button(type="submit") Entrar
+                    
+

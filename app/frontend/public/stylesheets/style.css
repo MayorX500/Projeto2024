@@ -27,6 +27,88 @@ a:visited {
   color: #125e32;
 }
 
+
+.bottom-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; 
+  align-items: center;
+}
+
+.bottom-options div {
+  display: flex;
+  gap: 30px;
+}
+
+#exportButton, #importButton {
+  background-color: transparent; /* Makes the button background transparent */
+  border: none; /* Removes any border */
+  color: inherit; /* Inherits text color from its parent for consistency */
+  font-size: 20px; /* Inherits font size from its parent */
+  cursor: pointer; /* Changes the cursor to pointer to indicate it's clickable */
+}
+
+div.line {
+  /* Draws a thin grey line  */
+  border-top: 1px solid #d3d3d3;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+#exportButton i, #importButton i{
+  margin-right: 5px; /* Adds spacing between the icon and text */
+}
+
+#exportButton i:hover, #exportButton:hover, #importButton i:hover, #importButton:hover{
+  color: #b2b1b3; /* Changes text and icon color on hover */
+}
+
+#sidebar .bottom-options {
+  position: absolute;
+  bottom: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  align-items: center;
+}
+
+.form label {
+  font-size: 16px;
+  margin-bottom: 10px;
+  width: 40px;
+}
+
+form {
+  flex-direction: column;
+  display: flex;
+  align-items: flex-start;
+}
+
+.form input {
+  padding: 7px;
+  border-radius: 5px;
+  border-color: #626262;
+  border-style: solid;
+  border-width: 0.01cm;
+  margin-bottom: 20px;
+  font-size: 14px;
+  width: 300px;
+}
+
+.form form button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #569ff7;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+
+  margin-top: 10px;
+}
+
 .page-item {
   padding: 6px 10px;
   border-radius: 6px;
@@ -176,8 +258,12 @@ main {
 
 .form {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: start; /* Aligns content to the start of the flex container */
+}
+
+.form form {
+  padding: 60px 20px 60px 20px;
 }
 
 .search {
@@ -304,13 +390,17 @@ main {
   border-radius: 5px; /* Rounded corners */
   cursor: pointer; /* Pointer cursor on hover */
   font-size: 16px; /* Font size */
-  width: 80px;
   position: relative;
   right: 80px; /* Adjusted to prevent overflow due to the width */
 }
 
-#loginButton:hover {
-  background-color: #64b3f4; /* Darker background on hover */
+#loginButton i{
+  margin-right: 5px; /* Adds spacing between the icon and text */
+}
+
+#loginButton i:hover, #loginButton:hover {
+  color: #ffff; /* Changes text and icon color on hover */
+  background-color: #64b3f4;
 }
 
 /* When minimizing the width of the window the login */

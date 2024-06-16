@@ -9,26 +9,84 @@ a(href="/")
     ul
         li
             a(href="/") Início
-        li
-            a(href="#") Legislação
+        li 
+            a(href="/favorites") Favoritos
         li
             a(href="#") Contactos
         li
             a(href="#") Sobre
+    div.bottom-options
+        div.line
+        div
+            a(href='/export', id='exportButton')
+                i.fa.fa-download(aria-hidden='true')
+                | Exportar
+            a(href='/import', id='importButton')
+                i.fa.fa-upload(aria-hidden='true')
+                | Importar
 //form.search
     div.input-wrapper
         input(type="text", placeholder="Search...")
     button(type="submit")
         i.fa.fa-search
-button#loginButton Login
+a(href='/login', id='loginButton', onclick='checkAuthentication()')
+    i.fa.fa-user(aria-hidden='true')
+    | Login
 
 script. 
     function openSidebar() {
         var sidebar = document.getElementById('sidebar');
         sidebar.style.left = '0px';
-      }
-      
-      function closeSidebar() {
+    }
+        
+    function closeSidebar() {
         var sidebar = document.getElementById('sidebar');
         sidebar.style.left = '-400px';
-      }
+    }
+    
+    function exportData() {
+        // Add your export functionality here
+        console.log('Data exported');
+    }
+    
+    function importData() {
+        // Add your import functionality here
+        console.log('Data imported');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateAuthenticationStatus();
+    });
+
+    function isLoggedIn() {
+        // This should be replaced with a real check based on your authentication system
+        // For example, check if a session variable, cookie, or local storage item is set
+        return document.cookie.indexOf('loggedIn=1') !== -1;
+    }
+
+    function updateAuthenticationStatus() {
+        if (isLoggedIn()) {
+            document.getElementById('loginButton').href = '/logout'; // Change to logout link if logged in
+            document.getElementById('loginButton').innerHTML = '<i class="fa fa-power-off" aria-hidden="true"></i> Logout';
+            document.querySelector('.bottom-options').style.display = 'flex'; // Show bottom options
+        } else {
+            document.getElementById('loginButton').href = '/login'; // Keep as login link if not logged in
+            document.getElementById('loginButton').innerHTML = '<i class="fa fa-user" aria-hidden="true"></i> Login';
+            document.querySelector('.bottom-options').style.display = 'none'; // Hide bottom options
+        }
+    }
+
+    function logout() {
+        console.log('Logged out');
+        // Perform logout logic here, e.g., clearing session or cookies
+        document.cookie = "loggedIn=0; path=/;";  // Adjust as necessary for your setup
+        updateAuthenticationStatus();  // Update UI after logging out
+    }
+
+    function checkAuthentication() {
+        if (isLoggedIn()) {
+            logout();  // Calls logout if already logged in
+        } else {
+            window.location.href = '/login';  // Redirects to login page
+        }
+    }
