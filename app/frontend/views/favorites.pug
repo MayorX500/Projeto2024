@@ -17,10 +17,37 @@ block content
         main
             .right-column
                 .text-block 
+                    if user.isadmin
+                        h1.blocky Perfil de Administrador
+                    else if user.iseditor && !user.isadmin
+                        h1.blocky Perfil de Editor
+                    else
+                        h1.blocky Perfil de Utilizador
+                .text-block.blocky
+                    h2 Nome:  
+                        h3.ministry #{user.full_name}
+                    h2 NIF:  
+                        h3.ministry #{user.id}
+                    h2 Email:  
+                        h3.ministry #{user.email}
+                    h2 Data de registo:
+                        -var date = user.created_at.split('T')[0];
+                        -var time = user.created_at.split('T')[1];
+                        -time = time.split('.')[0];
+                        -time = time.split(':')[0] + ':' + time.split(':')[1]
+                        h3.ministry #{date}    #{time}
+                    h3.ministry(style='color: black;') Nº documentos criados: #{user.posts_created} 
+                .text-block 
                     h1.blocky Favoritos
                 .text-block
-                    each document in allData
+                    if user_favorites.length > 0 && user_favorites
+                            each doc in allData
+                                .blocky
+                                    a(href="/specific/" + doc.id)
+                                        h2 #{doc.type} nº #{doc.code}
+                                        h3.ministry.uppercase #{doc.ministry}
+                                div.line
+                    else
                         .block
-                            h2 #{document}
-                
-                // include pagination
+                            p Não tem favoritos.
+                include pagination

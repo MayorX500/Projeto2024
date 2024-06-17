@@ -77,6 +77,27 @@ class User {
         this._favourites = favourites;
     }
 
+    addFavorite(favourite) {
+        let favs = this._favourites;
+        let success = false;
+        if (!this._favourites) {
+            this._favourites = [];
+        }
+        this._favourites = [];
+        for (let i = 0; i < favs.length; i++) {
+            this._favourites.push(parseInt(favs[i]));
+        }
+        if (!this._favourites.includes(favourite)) {
+            this._favourites.push(favourite);
+            success = true;
+        }
+        return success;
+    }
+
+    removeFavorite(favourite) {
+        this._favourites = this._favourites.filter(fav => fav !== favourite);
+    }
+
     get token() {
         return this._token;
     }

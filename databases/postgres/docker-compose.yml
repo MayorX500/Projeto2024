@@ -1,16 +1,47 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:latest
-    container_name: postgres_container
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+  frontend:
+    image: node:latest
+    container_name: frontend_container
+    working_dir: /app
     volumes:
-      - ./initdb.d:/docker-entrypoint-initdb.d
-      - ./data:/var/lib/postgresql/data
-      - ./datasets:/datasets
+      - ./../../app/frontend:/app
     ports:
-      - "13000:5432"
+      - "3002:3002"
+    command: sh -c "npm install && npm start"
+    depends_on:
+      - auth
+      - backend
+    networks:
+      - app-link
+
+  backend:
+    image: node:latest
+    container_name: backend_container
+    working_dir: /app
+    volumes:
+      - ./../../app/backend:/app
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm start"
+    depends_on:
+      - auth
+    networks:
+      - app-link
+
+  auth:
+    image: node:latest
+    container_name: auth_container
+    working_dir: /app
+    volumes:
+      - ./../../app/authenticator:/app
+    ports:
+      - "3001:3001"
+    command: sh -c "npm install && npm start"
+    networks:
+      - app-link
+
+networks:
+  app-link:
+    driver: bridge

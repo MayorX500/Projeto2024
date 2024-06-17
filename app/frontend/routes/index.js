@@ -1,9 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var axios = require('axios');
-const verifyLogin = require('../auth/protected');
+const {verifyAdmin, verifyEditor, verifyRoles} = require('../auth/protected');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
+const path = require('path');
 const entries_per_page = 10;
+
+
+const multer  = require('multer')
+const upload = multer({ dest: './public/data/uploads' })
+
 
 
 function getAllTypes() {
@@ -34,7 +41,7 @@ function separateByPublication(response) {
 
 async function getPages(url) {
   let totalPages = 1;
-  totalPages = await axios.get(url).then( response => {
+  totalPages = axios.get(url).then( response => {
     let total_entries = parseInt(response.data[0].count);
     let totalPages = Math.ceil(total_entries / entries_per_page);
     return totalPages;
@@ -46,7 +53,6 @@ async function getPages(url) {
 
 
 router.get('/', function(req, res) {
-  console.log(req.url);
   let all_types_P = getAllTypes();
   let page = req.query.page ? req.query.page : 1;
 
@@ -55,7 +61,6 @@ router.get('/', function(req, res) {
     delete req.query.page;
   }
   catch (error) {
-    console.log('No page query');
   }
   
   all_types_P.then(all_types => {
@@ -99,7 +104,6 @@ router.get('/', function(req, res) {
         url += '&';
       }
       url += fields;     
-      console.log(url);
 
       axios.get(url)
         .then(async response => {
@@ -141,10 +145,17 @@ router.get('/', function(req, res) {
   }
 );
 
-router.get('/specific/:id', function(req, res) {
+router.get('/specific/:id', async function(req, res) {
+  let cookie = req.cookies.token ? req.cookies.token : null;
+  let response = await axios.get('http://localhost:3004/auth/favorite', { headers: { Authorization: cookie } })
+  let user_faved = false;
+  let {success, message, user} = response.data;
+  if (success) {
+    user_faved = user.favourites.includes(req.params.id);
+  }
   axios.get('http://localhost:3000/' + req.params.id)
     .then(response => {
-      res.render('spec-page', { allData: response.data[0]});
+      res.render('spec-page', { allData: response.data[0], user_faved: user_faved });
     })
     .catch(error => {
       console.error(error);
@@ -187,12 +198,45 @@ router.get('/ministry', function(req, res) {
 });
 
 
-router.get('/favorites', verifyLogin, function(req, res) {
+router.get('/favorites', async function(req, res) {
+  let page = req.query.page ? parseInt(req.query.page) : 1;
   let token = req.cookies.token;
+  let fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+  if (!token) { // User is not logged in
+    res.redirect('/login');
+  } else {
+    let response = await axios.get('http://localhost:3004/auth/favorite', { headers: { Authorization: token } });
+    let user_favorites = response.data.user.favourites;
+    let allData = [];
+    let user = response.data.user;
+    let totalPages = Math.ceil(user_favorites.length / entries_per_page);
+    for (let i = 0; i < user_favorites.length; i++) {
+      let doc = await axios.get('http://localhost:3000/' + user_favorites[i]);
+      if (doc != null && doc.data != undefined){
+        allData.push(doc.data[0]);
+      }
+      else{
 
-  res.render('favorites', { allData: allData});
+      }
+    }
+    let start = (page - 1) * entries_per_page;
+    let end = start + entries_per_page;
+
+    allData = allData.slice(start, end);
+    res.render('favorites', { user: user, allData: allData, user_favorites: user_favorites, page: page, totalPages: totalPages, url: fullUrl });
   }
-);
+});
+
+router.post('/favorite', async function(req, res) {
+  let favorite = req.body.favorite;
+  let token = req.cookies.token;
+  if (!token) { // User is not logged in
+    res.redirect('/login');
+  } else {
+    await axios.post('http://localhost:3000/favorite', { favorite: favorite }, { headers: { Authorization: token } });
+    res.redirect('/specific/' + favorite);
+  }
+});
 
 router.get('/logout', function(req, res) {
   res.clearCookie('token');
@@ -200,7 +244,6 @@ router.get('/logout', function(req, res) {
 });
 
 router.post('/login', async function(req, res) {
-  console.log(req.body);
   let valid = axios.post('http://localhost:3004/auth/login', { id: req.body.nif, password: req.body.password });
   valid.then(response => {
     if (response.data.success) {
@@ -236,11 +279,39 @@ router.get('/register', function(req, res) {
 });
 
 
-router.get('/create', function(req, res) {
+router.get('/create', verifyEditor, function(req, res) {
   res.render('createDoc');
 });
 
-router.get('/edit/:id', function(req, res) {
+router.post('/submit_document', upload.single('pdf_link') , async function(req, res) {
+  let token = req.cookies.token;
+  let doc = req.body;
+
+  // Save the PDF file to the specified folder
+  if (req.file) {
+    const newPath = path.join(__dirname,'..','/public/data/uploads', req.file.originalname);
+    const public_path = path.join('/data/uploads', req.file.originalname);
+    const pdf_path = path.join(__dirname, '..', req.file.path);
+    try {
+      fs.renameSync(pdf_path, newPath);
+      doc.pdf_link = public_path; // Save the file path to the pdf_link field
+    } catch (error) {
+      doc.pdf_link = "";
+    }
+  }
+
+  let response = await axios.post('http://localhost:3000/', doc, { headers: { Authorization: token } });
+  if (response.data.success) {
+    res.redirect('/specific/' + response.data.new_id);
+  }
+  else {
+    res.redirect('/auth_error/504?custom_message=' + response.data.message);
+  }
+});
+
+
+
+router.get('/edit/:id', verifyEditor , function(req, res) {
   try {
     axios.get('http://localhost:3000/' + req.params.id)
       .then(response => {
@@ -256,9 +327,76 @@ router.get('/edit/:id', function(req, res) {
       });
   }
   catch (error) {
-    console.log('No id parameter');
     res.status(500).send('An error occurred');
   }
+});
+
+router.get('/delete/:id', verifyEditor, function(req, res) {
+  axios.delete('http://localhost:3000/' + req.params.id)
+    .then(response => {
+      res.redirect('/');
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).send('An error occurred');
+    });
+});
+
+router.post('/update_document', upload.single('pdf_link') , async function(req, res) {
+  let token = req.cookies.token;
+  let doc = req.body;
+  let id = req.body.id;
+
+  // Save the PDF file to the specified folder
+  if (req.file) {
+    const newPath = path.join(__dirname,'..','/public/data/uploads', req.file.originalname);
+    const public_path = path.join('/data/uploads', req.file.originalname);
+    const pdf_path = path.join(__dirname, '..', req.file.path);
+    try {
+      fs.renameSync(pdf_path, newPath);
+      doc.pdf_link = public_path; // Save the file path to the pdf_link field
+    } catch (error) {
+      doc.pdf_link = "";
+    }
+  }
+
+  let response = await axios.put('http://localhost:3000/' + id, doc, { headers: { Authorization: token } });
+  if (response.data.success) {
+    res.redirect('/specific/' + id);
+  }
+  else {
+    res.redirect('/auth_error/504?custom_message=' + response.data.message);
+  }
+}
+);
+
+
+router.get('/auth_error/:code', function(req, res) {
+  let message = '';
+  switch (req.params.code) {
+    case '403':
+      message = 'Não tem permissões para aceder a esta página.';
+      break;
+    case '402':
+      message = 'Necessita de permissões de administrador para aceder a esta página.';
+      break;
+    case '504':
+      message = 'Ocorreu um erro ao criar o documento.';
+      break;
+    default:
+      message = 'Erro desconhecido';
+      break;
+  }
+  res.render('auth_error', { message: message });
+});
+
+
+router.get('/export', verifyAdmin, function(req, res) {
+  res.render('export_import', { exp: true });
+});
+
+router.get('/import', verifyAdmin, function(req, res) {
+  res.render('export_import', { exp: false });
 });
 
 

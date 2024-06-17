@@ -11,10 +11,8 @@ a(href="/")
             a(href="/") Início
         li#permited
             a(href="/create") Adicionar Documento
-        li#permited
-            a(href="/favorites") Favoritos
-        li
-            a(href="#") Contactos
+        li#permited2
+            a(href="/favorites") Área Pessoal
         li
             a(href="#") Sobre
     div.bottom-options
@@ -71,11 +69,13 @@ script.
             loginButton.innerHTML = '<i class="fa fa-power-off" aria-hidden="true"></i> Logout';
             document.querySelector('.bottom-options').style.display = 'flex';
             document.getElementById('permited').style.display = 'block'; 
+            document.getElementById('permited2').style.display = 'block'; 
         } else {
             loginButton.href = '/login'; 
             loginButton.innerHTML = '<i class="fa fa-user" aria-hidden="true"></i> Login';
             document.querySelector('.bottom-options').style.display = 'none';
             document.getElementById('permited').style.display = 'none'; 
+            document.getElementById('permited2').style.display = 'none'; 
         }
 
         console.log('Authentication status updated');

@@ -13,75 +13,10 @@ async function getCustom (query) {
     return result.rows ? result.rows : null;
 }
 
-// Get all documents
-async function getAll (filters) {
-    console.log(filters);
-    let fields = "id, type, code, ministry, publication_date";
-    if (filters !== null) {
-        fields = filters.fields ? filters.fields : fields;
-    }
-    let query = await Client.query ( `SELECT ${fields} FROM public.dreapp_document;` );
-    return query.rows ? query.rows : null;
-}
-
 // Get a document by its ID
 async function getByID (id) {
     let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON dt.reference_id = d.id WHERE  d.id =  ${id} ;` );
-    return query.rows ? query.rows : null;
-}
-
-// Get documents by their date
-async function getDate (date) {
-    date = date.toString();
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE  d.publication_date =  "${date}" ;` );
-    return query.rows ? query.rows : null;
-}
-
-
-// FILTERS
-// Get documents by their type
-async function getByType (type) {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE  d.type =  ${type} ;` );
-    return query.rows ? query.rows : null;
-}
-
-// Get documents by their code
-async function getByCode (code) {
-    let no_code = "" ;
-    let fields = "d.id, d.type, d.code, d.publication_date, dt.reference_id, dt.created_at, dt.url, dt.content";
-    if (code !== null) {
-        no_code = `WHERE d.code = ${code}`;
-        fields = "d.*, dt.reference_id, dt.created_at, dt.url, dt.content";
-
-    }
-    let query = await Client.query ( `SELECT  ${fields} FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ${no_code};` );
-    return query.rows ? query.rows : null;
-}
-
-// Get documents by publication year
-async function getByYear (year) {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id WHERE EXTRACT(YEAR FROM d.publication_date) = ${year} ;` );
-    return query.rows ? query.rows : null;
-}
-
-// Get last X documents
-async function getLast (limit, fields) {
-    let f = fields ? fields : "*";
-    let query = await Client.query ( `SELECT ${f} FROM public.dreapp_document ORDER BY publication_date DESC LIMIT ${limit};` );
-    return query.rows ? query.rows : null;
-}
-
-// SORTS
-// Get documents sorted by their publication date
-async function getByDate () {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ORDER BY d.publication_date;` );
-    return query.rows ? query.rows : null;
-}
-
-// Get documents sorted by their creation date
-async function getByCreationDate () {
-    let query = await Client.query ( `SELECT  d.*, dt.reference_id, dt.created_at, dt.url, dt.content FROM public.dreapp_document d LEFT JOIN public.dreapp_documenttext dt ON d.id = dt.reference_id ORDER BY d.creation_date;` );
-    return query.rows ? query.rows : null;
+    return query.rows.length > 0 ? query.rows : null;
 }
 
 
@@ -91,23 +26,60 @@ async function getTypes () {
     return query.rows ? query.rows : null;
 }
 
-// Get all ministries without repetition
-async function getMinistries () {
-    let query = await Client.query ( `SELECT DISTINCT ministry FROM public.dreapp_document;` );
-    return query.rows ? query.rows : null;
+
+async function createDocument ({id = 0,type, code, publication, ministry, publication_date, url, additional_link, pdf_link = "", description, content, some_id = 0, identifier = "", active = true, revoked = false, is_confidential = false, is_deleted = false, reference = "", version = 1, status = ""}) {
+    let start_id = id;
+    if (id === 0) {
+        id_result = await Client.query('SELECT MAX(id) FROM public.dreapp_document;');
+        id = id_result.rows ? (parseInt(id_result.rows[0].max) + 1) : 0;
+    }
+    let query = `INSERT INTO public.dreapp_document (id, type, code, publication, ministry, publication_date, identifier, active, revoked, description, pdf_link, additional_link, is_confidential, reference, version, status, created_at, some_id, is_deleted) VALUES (${id},'${type}', '${code}', '${publication}', '${ministry}', '${publication_date}', '${identifier}', ${active}, ${revoked}, '${description}', '${pdf_link}', '${additional_link}', ${is_confidential}, '${reference}', ${version}, '${status}', NOW(), ${some_id}, ${is_deleted});`;
+    try {
+        await Client.query(query);
+    }
+    catch (e) {
+    }
+    let txt_id_result = 0;
+    if (start_id !== 0) {
+        txt_id_result = await Client.query('SELECT MAX(id) FROM public.dreapp_documenttext WHERE reference_id = $1;', [id]);
+    } else {
+        txt_id_result = await Client.query('SELECT MAX(id) FROM public.dreapp_documenttext;');
+    }
+    let txt_id = txt_id_result.rows ? (parseInt(txt_id_result.rows[0].max) + 1) : 0;
+    let text_query = 'INSERT INTO public.dreapp_documenttext (id ,reference_id, url, content, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id;';
+    try {
+        await Client.query(text_query, [txt_id ,id, url, content]);
+    }
+    catch (e) {
+    }
+    return {id: id};
 }
+
+async function updateDocument ({id, type, code, publication, ministry, publication_date, url, additional_link, pdf_link, description, content, some_id = 0, identifier = "", active = true, revoked = false, is_confidential = false, is_deleted = false, reference = "", version = 1, status = ""}) {
+    createDocument({id ,type, code, publication, ministry, publication_date, url, additional_link, pdf_link, description, content, some_id, identifier, active, revoked, is_confidential, is_deleted, reference, version, status});
+    let query = 'UPDATE public.dreapp_document SET type = $1, code = $2, publication = $3, ministry = $4, publication_date = $5, identifier = $6, active = $7, revoked = $8, description = $9, pdf_link = $10, additional_link = $11, is_confidential = $12, reference = $13, version = $14, status = $15 WHERE id = $16;';
+    let values = [type, code, publication, ministry, publication_date, identifier, active, revoked, description, pdf_link, additional_link, is_confidential, reference, version, status, id];
+    let result = await Client.query(query, values);
+    let text_query = 'UPDATE public.dreapp_documenttext SET url = $1, content = $2 WHERE reference_id = $3;';
+    let text_values = [url, content, id];
+    let text_result = await Client.query(text_query, text_values);
+    return {id: id};
+}
+
+async function deleteDocument (id) {
+    let query = 'DELETE FROM public.dreapp_document WHERE id = $1;';
+    let result = await Client.query(query, [id]);
+    let text_query = 'DELETE FROM public.dreapp_documenttext WHERE reference_id = $1;';
+    let text_result = await Client.query(text_query, [id]);
+    return {id: id};
+}
+
 
 module.exports = {
     getCustom,
     getByID,
-    getAll,
-    getByType,
-    getByCode,
-    getByYear,
-    getByDate,
-    getLast,
-    getDate,
-    getMinistries,
-    getByCreationDate,
-    getTypes
+    getTypes,
+    createDocument,
+    updateDocument,
+    deleteDocument
 };

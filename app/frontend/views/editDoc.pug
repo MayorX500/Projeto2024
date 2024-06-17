@@ -19,27 +19,45 @@ block content
         .text-block
           h1.blocky Edit Document
         .text-block.form.container
-          form(action="/update_document" method="post")  
+          form(action="/update_document" method="POST" enctype="multipart/form-data") 
+            label(for="nif")
+              input(type="hidden", name="id", value=doc.id)
             label(for="type") Categoria:
-              input(type="text", name="type", value=doc.type, required=true)  
+              input(type="text", name="type", value=doc.type)  
             label(for="code") Código:
-              input#code(name="code", type="text", value=doc.code, required=true)
+              input#code(name="code", type="text", value=doc.code)
             label(for="publication") Publicação:
-              input#publication(name="publication", type="text", value=doc.publication, required=true)
+              input#publication(name="publication", type="text", value=doc.publication)
             label(for="ministry") Emissor:
-              input#ministry(name="ministry", type="text", value=doc.ministry, required=true)
+              input#ministry(name="ministry", type="text", value=doc.ministry)
             label(for="publication_date") Data de Publicação:
-              input#publication_date(name="publication_date", type="date", value=doc.publication_date, required=true)
-            label(for="official_page") URL Página Oficial:
-              input#official_page(name="official_page", type="url", value=doc.url)
-            label(for="official_pdf") PDF Oficial:
-              input#official_pdf(name="official_pdf", type="url", value=doc.additional_link)
-            label(for="unofficial_pdf") PDF Não Oficial:
-              if doc.unofficial_pdf
-                a(href=doc.unofficial_pdf, target="_blank") View Current PDF
-              input#unofficial_pdf(type="file", name="unofficial_pdf")
+              input#publication_date(name="publication_date", type="date", value=doc.publication_date)
+            label(for="url") URL Página Oficial:
+              input#official_page(name="url", type="url", value=doc.url)
+            label(for="additional_link") PDF Oficial:
+              input#official_pdf(name="additional_link", type="url", value=doc.additional_link)
+            label(for="pdf_link") PDF Não Oficial:
+              if doc.pdf_link
+                a(href=doc.pdf_link, target="_blank") View Current PDF
+              input#unofficial_pdf(type="file", name="pdf_link", value=doc.pdf_link)
             label(for="description") Descrição:
-              input#description(name="description", type="text", value=doc.description, required=true)
+              input#description(name="description", type="text", value=doc.description)
             label(for="content") Conteúdo:
-              textarea#content(name="content", required=true)= doc.content 
-            button(type="submit") Atualizar Documento 
+              textarea#content(name="content")= doc.content 
+            div
+              button#submit(type="submit") Atualizar
+
+    script.
+      document.addEventListener('DOMContentLoaded', function() {
+        $(document).ready(function(){
+          submit.addEventListener('click', function() {
+            if (type.value === '' || code.value === '' || publication.value === '' || ministry.value === '' || publication_date.value === '' || description.value === '' || content.value === '') {
+              alert('Por favor, preencha todos os campos obrigatórios.');
+              return;
+            } else {
+              let answer = confirm('Tem a certeza que pretende editar este documento?');
+            }
+          });
+        });
+      });
+          

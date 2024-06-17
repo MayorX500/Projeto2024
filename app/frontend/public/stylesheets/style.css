@@ -28,7 +28,7 @@ a:visited {
   color: #125e32;
 }
 
-#edit-button {
+#edit-button, #deleteButton {
   background-color: #569ff7;
   color: white;
   padding: 5px 10px;
@@ -36,11 +36,9 @@ a:visited {
   border-radius: 5px;
   cursor: pointer;
   font-size: 18px;
-  margin-left: 30px;
-  margin-top: 20px;
 }
 
-#edit-button:hover {
+#edit-button:hover, #deleteButton:hover {
   background-color: #64b3f4;
 }
 
@@ -421,6 +419,11 @@ main {
   margin-right: 10px;    
 }
 
+.inline  {
+  display: inline-block; 
+  margin-right: 10px;    
+}
+
 
 .content p {
   margin-bottom: 20px; /* Adds space below each paragraph */
@@ -588,4 +591,28 @@ p#error-message :hover{
   font-size: large;
   color: rgb(185, 8, 8);
   margin-top: 10px;
+}
+
+#heart-button {
+  padding: 0px;
+  font-size: 26px;
+  color: #f75679;
+  background-color: transparent;
+  border: none;
+}
+
+#heart-button i:hover, #heart-button:hover {
+  color: #fba4b6;
+  background-color: transparent;
+}
+
+.bts button {
+  margin-right:27px;
+  margin-top: 10px;
+  padding: 0px;
+}
+
+.bts  {
+  display: flex;
+  justify-content: center;
 }

@@ -19,7 +19,7 @@ block content
         .text-block
           h1.blocky Create a New Document
         .text-block.form.container
-          form(action="/submit_document" method="post")
+          form(action="/submit_document" method="POST" enctype="multipart/form-data")
             label(for="type") Categoria:
               input(type="text", name="type", required=true)
             label(for="code") Código:
@@ -30,14 +30,28 @@ block content
               input#ministry(name="ministry", type="text", required=true)
             label(for="publication_date") Data de Publicação:
               input#publication_date(name="publication_date", type="date", required=true)
-            label(for="official_page") URL Página Oficial:
-              input#official_page(name="official_page", type="url")
-            label(for="official_pdf") PDF Oficial:
-              input#official_pdf(name="official_pdf", type="url")
-            label(for="unofficial_pdf") PDF Não Oficial:
-              input#unofficial_pdf(type="file", name="unofficial_pdf")
+            label(for="url") URL Página Oficial:
+              input#official_page(name="url", type="url")
+            label(for="additional_link") PDF Oficial:
+              input#official_pdf(name="additional_link", type="url")
+            label(for="pdf_link") PDF Não Oficial:
+              input#unofficial_pdf(type="file", name="pdf_link")
             label(for="description") Descrição:
               input#description(name="description", type="text", required=true)
             label(for="content") Conteúdo:
               textarea#content(name="content", required=true)
-            button(type="submit") Criar Documento
+            button#submit(type="submit") Criar Documento
+    script.
+      document.addEventListener('DOMContentLoaded', function() {
+        submit.addEventListener('click', function() {
+          if (type.value === '' || code.value === '' || publication.value === '' || ministry.value === '' || publication_date.value === '' || description.value === '' || content.value === '') {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+          } else {
+            let answer = confirm('Tem a certeza que pretende criar este documento?');
+            if (!answer) {
+              return;
+            }
+          }
+        });
+      });

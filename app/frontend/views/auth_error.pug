@@ -14,16 +14,9 @@ block content
     body
         header
             include header
-        main
-            .right-column
-                .text-block 
-                    h1.blocky #{min}
-                .text-block
-                    each document in allData
-                        .block
-                            h2
-                                a(href=`/specific/${document.id}`) #{document.type} nº #{document.code}
-                            h3.ministry.uppercase #{document.ministry}
-                            p #{document.description}
-                        div.line
-                include pagination
+    
+    script.
+        $(document).ready(function(){
+            alert('#{message}');
+            window.location.href = '/';
+        });

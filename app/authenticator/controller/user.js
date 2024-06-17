@@ -34,7 +34,6 @@ function validate_token (token){
             valid = token_obj.id;
         }
     }
-    console.log(`Valid: ${valid}`);
     return valid;
 }
 
@@ -67,14 +66,23 @@ async function getUser ({id}) {
     let user = null;
     if (result.rows.length == 1){
         user = User.fromJSON(result.rows[0]);
+        try {
+            let t = validate_token(user.token);
+            if (t === -1){
+                user.token = create_token(user.id, user.full_name);
+                await updateUser(user.toJSON());
+            }
+        }
+        catch (error){
+            user.token = create_token(user.id, user.full_name);
+            await updateUser(user.toJSON());
+        }
     }
     return user;
 }
 
 async function updateUser ({id, password, email, full_name, isadmin, iseditor, posts_created, favourites, token, created_at, is_deleted}) {
     // Ensure created_at is properly formatted as a string
-
-    console.log(`Id: ${id}, password: ${password}, email: ${email}, full_name: ${full_name}, isadmin: ${isadmin}, iseditor: ${iseditor}, posts_created: ${posts_created}, favourites: ${favourites}, token: ${token}, created_at: ${created_at}, is_deleted: ${is_deleted}`);
 
     let formattedCreatedAt = created_at ? `'${created_at.toISOString()}'` : 'NULL';
     
@@ -129,18 +137,44 @@ async function login({ id }) {
                 user.token = create_token(user.id, user.full_name);
                 await updateUser(user.toJSON());
             }
-            // check if the token is still valid (not expired), if not, create a new one and update the user
-            let token = jwt.verify(user.token, SECRET);
-            if (token === null){
-                user.token = create_token(user.id, user.full_name);
-                updateUser(user.toJSON());
-            }
-            else {
-                if (token.exp < Math.floor(Date.now() / 1000)){
+            try {
+                // check if the token is still valid (not expired), if not, create a new one and update the user
+                let token = jwt.verify(user.token, SECRET);
+                if (token === null){
                     user.token = create_token(user.id, user.full_name);
                     updateUser(user.toJSON());
-                }    
+                }
+                else {
+                    if (token.exp < Math.floor(Date.now() / 1000)){
+                        user.token = create_token(user.id, user.full_name);
+                        updateUser(user.toJSON());
+                    }    
+                }
+            } catch (error) {
+                user.token = create_token(user.id, user.full_name);
+                await updateUser(user.toJSON());
             }
+        }
+    }
+    return user;
+}
+
+async function addFavourite({id, post_id}){
+    let user = await getUser({id});
+    if (user !== null){
+        user.favourites.push(post_id);
+        user = await updateUser(user.toJSON());
+    }
+    return user;
+}
+
+async function removeFavourite({id, post_id}){
+    let user = await getUser({id});
+    if (user !== null){
+        let index = user.favourites.indexOf(post_id);
+        if (index !== -1){
+            user.favourites.splice(index, 1);
+            user = await updateUser(user.toJSON());
         }
     }
     return user;
@@ -152,5 +186,7 @@ module.exports = {
     updateUser,
     deleteUser,
     login,
-    validate_token
+    validate_token,
+    addFavourite,
+    removeFavourite
 };

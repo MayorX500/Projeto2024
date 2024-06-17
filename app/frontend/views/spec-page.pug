@@ -18,7 +18,15 @@ block content
         .right-column
           .text-block(style='display: flex; justify-content: space-between; align-items: center;')
             h1.blocky #{allData.type} nº #{allData.code}
-            button#edit-button(type="button") Editar
+            .bts
+              button#heart-button
+                if user_faved
+                  i.fas.fa-heart
+                else
+                  i.far.fa-heart
+              div
+                button#edit-button(type="button") Editar
+                button#deleteButton(type="button") Apagar
           .text-block.blocky
             h3 Publicação:  
               a(href="/publication?pub=" + allData.publication) #{allData.publication}
@@ -36,7 +44,7 @@ block content
               a #{sep}
               a(href=allData.additional_link) PDF Oficial
               a #{sep}
-              a(href="#") PDF Não Oficial
+              a(href=allData.pdf_link) PDF Não Oficial
           .text-block.blocky
             div.content
               p!= allData.content
@@ -44,21 +52,66 @@ block content
       script.
         document.addEventListener('DOMContentLoaded', function() {
           editB();
+          setupHeartButton();
         });
-
 
         function handleEditRedirect(id) {
           window.location.href = '/edit/' + id;
         }
 
+        function handleDeleteRedirect(id) {
+          window.location.href = '/delete/' + id;
+        }
+
         function editB() {
           if (isLoggedIn()) {
+            document.getElementById('deleteButton').addEventListener('click', function() {
+              handleDeleteRedirect('#{allData.id}');
+            });
             document.getElementById('edit-button').addEventListener('click', function() {
               handleEditRedirect('#{allData.id}');
             });
           } else {
             document.getElementById('edit-button').style.display = 'none';
+            document.getElementById('deleteButton').style.display = 'none';
           }
         }
+        
+        function setupHeartButton() {
+          const heartButton = document.getElementById('heart-button');
+          const heartIcon = heartButton.querySelector('i');
+          console.log('Heart button clicked');  
+
+          heartButton.addEventListener('click', function() {
+            console.log('Heart button clicked');  
+            if (heartIcon.classList.contains('far')) {
+              heartIcon.classList.remove('far');
+              heartIcon.classList.add('fas');
+            } else {
+              heartIcon.classList.remove('fas');
+              heartIcon.classList.add('far');
+            }
+            heart();
+          });
+        }
+
+        async function heart() {
+          try {     
+            const response = await fetch('/favorite', {
+              method: 'post',
+              body: JSON.stringify({
+                favorite: #{allData.id}
+              }),
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            console.log('Completed!', response);
+          } catch(err) {
+            console.error(`Error: ${err}`);
+          }
+        }
+
+      
 
         

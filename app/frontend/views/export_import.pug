@@ -1,0 +1,55 @@
+extends layout
+
+block content
+  html(lang="en")
+    head
+      meta(charset="UTF-8")
+      meta(name="viewport", content="width=device-width, initial-scale=1.0")
+      link(rel="stylesheet", href="/stylesheets/style.css")
+      link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css')
+      link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css')
+      script(src='https://cdn.jsdelivr.net/npm/flatpickr')
+      link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap")
+      script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+    body
+        header
+            include header
+        main
+            if !exp
+                .right-column
+                    .text-block
+                        h1.blocky Importar
+                    .text-block.form
+                        form(enctype="multipart/form-data")
+                                label(for="pdf_link", style="width: 200px;") Ficheiro a importar:
+                                    .inline
+                                        input#unofficial_pdf(type="file", name="pdf_link", style="width: 600px;")
+                                        button#submit(type="submit") Importar
+        script.
+            document.addEventListener('DOMContentLoaded', function() {
+                $(document).ready(function(){
+                    console.log(!{exp});
+                    if (!{exp}) {
+                        let answer = confirm('Tem a certeza que pretende exportar todos os documentos?');
+                        proceed(answer);
+                    }
+                });
+                
+                submit.addEventListener('click', function() {
+                    if (!!{exp}){
+                        let answer = confirm('Tem a certeza que pretende importar este ficheiro?');
+                        proceed(answer);
+                    }
+                });
+
+                function proceed(answer) {
+                    if (answer == true) {
+                        alert("Falta aplicar o IMPORT/EXPORT");
+                        window.location.href = '/';
+                    }
+                    else {
+                        alert("Operação cancelada");
+                        window.location.href = '/import';
+                    }
+                }
+            });

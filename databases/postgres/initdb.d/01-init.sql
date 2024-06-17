@@ -33,13 +33,14 @@ CREATE TABLE public.dreapp_documenttext (
 -- Schema for table dreapp_user
 CREATE TABLE public.dreapp_user (
     id BIGINT PRIMARY KEY, -- Social security number (xxx xxx xxx)
-    username TEXT,
     password TEXT,
     email TEXT,
     full_name TEXT,
     isAdmin BOOLEAN,
     isEditor BOOLEAN,
     posts_created BIGINT,
+    favourites BIGINT[],
+    token TEXT,
     created_at TIMESTAMPTZ,
     is_deleted BOOLEAN
 );

@@ -1,15 +1,19 @@
 .right-column
-  each publicationKey in Object.keys(allData)
-    - const publication = allData[publicationKey]
-    .publication-container
-      h1.text-block.block
-        a(href="/publication/?pub=" + publicationKey) #{publicationKey}
-      .text-block
-        each document in publication
-          .block
-            h2
-              a(href=`/specific/${document.id}`) #{document.type} nº #{document.code}
-            h3.ministry.uppercase #{document.ministry}
-            p #{document.description}
-
-  include pagination
+  if Object.keys(allData).length > 0
+    each publicationKey in Object.keys(allData)
+      - const publication = allData[publicationKey]
+      .publication-container
+        h1.text-block.block
+          a(href="/publication/?pub=" + publicationKey) #{publicationKey}
+        .text-block
+          each document in publication
+            .block
+              h2
+                a(href=`/specific/${document.id}`) #{document.type} nº #{document.code}
+              h3.ministry.uppercase #{document.ministry}
+              p #{document.description}
+            div.line
+    include pagination
+  else
+    .text-block.block
+      p Não foram encontrados documentos.
